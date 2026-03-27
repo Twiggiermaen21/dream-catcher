@@ -37,43 +37,37 @@ function getZodiac() {
 }
 
 /* ─── shared styles ─── */
-const glass = {
-  background: 'rgba(255,255,255,0.04)',
-  border: '1px solid rgba(255,255,255,0.07)',
-  backdropFilter: 'blur(12px)',
-  borderRadius: 20,
-};
-const glassHover = {
-  ...glass,
-  transition: 'transform 0.2s, box-shadow 0.2s',
-};
-const section = { color: '#8b8aaa', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 };
-
 function CardHeader({ label, extra }) {
   return (
-    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom: 16 }}>
-      <span style={section}>{label}</span>
-      {extra && <span style={{ color:'#8b8aaa', fontSize: 11 }}>{extra}</span>}
+    <div className="flex justify-between items-baseline mb-5">
+      <span className="text-muted text-[10px] font-bold tracking-[0.15em] uppercase">{label}</span>
+      {extra && <span className="text-muted/60 text-[11px] font-medium">{extra}</span>}
     </div>
   );
 }
 
-function Pill({ children, color = '#7c6af5' }) {
+function Pill({ children, color = 'accent' }) {
+  // Map hex/name to tailwind color if needed, but here we can just use opacity
+  const colorClass = {
+    accent: 'bg-accent/15 text-accent border-accent/25',
+    teal: 'bg-teal/15 text-teal border-teal/25',
+    gold: 'bg-gold/15 text-gold border-gold/25',
+    pink: 'bg-pink/15 text-pink border-pink/25',
+  }[color === '#7c6af5' ? 'accent' : color === '#e879a0' ? 'pink' : color] || 'bg-accent/15 text-accent border-accent/25';
+
   return (
-    <span style={{
-      display:'inline-flex', alignItems:'center', padding:'3px 10px', borderRadius: 20,
-      fontSize: 11, fontWeight: 600,
-      background: `${color}22`, color, border: `1px solid ${color}44`,
-    }}>{children}</span>
+    <span className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold border ${colorClass}`}>
+      {children}
+    </span>
   );
 }
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background:'#1a1b30', border:'1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding:'8px 12px', fontSize: 12, color:'#f0eeff' }}>
-      <div style={{ color:'#8b8aaa', marginBottom: 2 }}>{label}</div>
-      <div style={{ color:'#c4baff', fontWeight: 700 }}>Jakość: {payload[0].value}/10</div>
+    <div className="glass !bg-[#0f1122]/90 p-3 rounded-2xl border-white/10 shadow-xl">
+      <div className="text-muted text-[11px] mb-1 font-medium">{label}</div>
+      <div className="text-white font-bold text-sm">Jakość: <span className="text-accent">{payload[0].value}/10</span></div>
     </div>
   );
 };
@@ -104,193 +98,189 @@ export default function Dashboard() {
   const firstName = user?.displayName?.split(' ')[0] ?? 'użytkowniku';
 
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap: 22, paddingBottom: 8 }}>
+    <div className="flex flex-col gap-8 pb-10 max-w-6xl mx-auto">
 
       {/* ── Header ── */}
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+      <div className="flex justify-between items-end">
         <div>
-          <div style={{ color:'#8b8aaa', fontSize: 12, marginBottom: 4 }}>
+          <div className="text-muted text-[13px] mb-2 font-medium">
             {new Date().toLocaleDateString('pl-PL', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}
           </div>
-          <h1 style={{ color:'#f0eeff', fontSize: 26, fontWeight: 700, lineHeight: 1.2 }}>
-            {greeting}, <span style={{ background:'linear-gradient(90deg,#c4baff,#e879a0)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>{firstName}</span> ✦
+          <h1 className="text-white text-4xl font-extrabold leading-tight">
+            {greeting}, <span className="bg-linear-to-r from-[#c4baff] to-[#e879a0] bg-clip-text text-transparent">{firstName}</span> <span className="text-accent/80">✦</span>
           </h1>
-          <div style={{ color:'#8b8aaa', fontSize: 13, marginTop: 5 }}>
-            Masz <strong style={{ color:'#c4baff' }}>{sleepLogs.length + moodLogs.length + dreamLogs.length}</strong> wpisów w dzienniku
+          <div className="text-muted text-sm mt-2 font-medium">
+            Masz <strong className="text-accent underline decoration-accent/20 underline-offset-4">{sleepLogs.length + moodLogs.length + dreamLogs.length}</strong> wpisów w dzienniku
           </div>
         </div>
-        <div style={{
-          width: 48, height: 48, borderRadius: 16, flexShrink: 0,
-          background:'linear-gradient(135deg,#7c6af5,#e879a0)',
-          display:'flex', alignItems:'center', justifyContent:'center',
-          fontSize: 20, fontWeight: 700, color:'white',
-          boxShadow:'0 0 24px rgba(124,106,245,0.35)',
-        }}>
+        <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-accent to-pink flex items-center justify-center text-2xl font-black text-white shadow-[0_0_30px_rgba(124,106,245,0.4)] border border-white/20 transition-transform hover:scale-105 cursor-pointer">
           {(user?.displayName?.[0] ?? '?').toUpperCase()}
         </div>
       </div>
 
       {/* ── Quick actions ── */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap: 12 }}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {[
-          { to:'/new-entry', icon:'😴', label:'Dodaj sen',    sub:'Zapisz noc',        grad:'linear-gradient(135deg,rgba(124,106,245,0.25),rgba(80,60,180,0.1))', glow:'rgba(124,106,245,0.3)', border:'rgba(124,106,245,0.3)' },
-          { to:'/new-entry', icon:'🌈', label:'Zapisz nastrój', sub:'Jak się czujesz?', grad:'linear-gradient(135deg,rgba(34,211,238,0.2),rgba(20,140,160,0.08))', glow:'rgba(34,211,238,0.25)', border:'rgba(34,211,238,0.25)' },
-          { to:'/new-entry', icon:'🌙', label:'Opisz sen',    sub:'Zanim zapomnisz',   grad:'linear-gradient(135deg,rgba(244,168,50,0.2),rgba(180,110,20,0.08))',  glow:'rgba(244,168,50,0.25)', border:'rgba(244,168,50,0.25)' },
+          { to:'/new-entry', icon:'😴', label:'Dodaj sen',    sub:'Zapisz noc',        grad:'from-accent/20 to-accent/5', glow:'shadow-glow-purple', border:'border-accent/30' },
+          { to:'/new-entry', icon:'🌈', label:'Zapisz nastrój', sub:'Jak się czujesz?', grad:'from-teal/20 to-teal/5',     glow:'shadow-[0_0_20px_rgba(34,211,238,0.2)]', border:'border-teal/30' },
+          { to:'/new-entry', icon:'🌙', label:'Opisz sen',    sub:'Zanim zapomnisz',   grad:'from-gold/20 to-gold/5',     glow:'shadow-[0_0_20px_rgba(244,168,50,0.2)]', border:'border-gold/30' },
         ].map((a, i) => (
-          <Link key={i} to={a.to} style={{ textDecoration:'none' }}
-            onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow=`0 8px 32px ${a.glow}`; }}
-            onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}
-          >
-            <div style={{ ...glass, background: a.grad, border:`1px solid ${a.border}`, padding:'18px 20px', borderRadius: 18, transition:'transform 0.2s, box-shadow 0.2s' }}>
-              <div style={{ fontSize: 28, marginBottom: 10 }}>{a.icon}</div>
-              <div style={{ color:'#f0eeff', fontWeight: 700, fontSize: 14 }}>{a.label}</div>
-              <div style={{ color:'#8b8aaa', fontSize: 12, marginTop: 3 }}>{a.sub}</div>
+          <Link key={i} to={a.to} className="no-underline group">
+            <div className={`glass bg-linear-to-br ${a.grad} ${a.border} p-6 rounded-3xl transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-2xl ${a.glow}`}>
+              <div className="text-4xl mb-4 grayscale group-hover:grayscale-0 transition-all duration-300 transform group-hover:scale-110 origin-left">{a.icon}</div>
+              <div className="text-white font-bold text-[15px]">{a.label}</div>
+              <div className="text-muted/70 text-sm mt-1 font-medium">{a.sub}</div>
             </div>
           </Link>
         ))}
       </div>
 
       {/* ── 3-column grid ── */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap: 14 }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Moon */}
-        <div style={glass}>
-          <div style={{ padding:'18px 20px' }}>
+        <div className="glass card-hover rounded-3xl overflow-hidden group">
+          <div className="p-6">
             <CardHeader label="Stan kosmosu" />
             {ctxLoading ? (
-              <div style={{ color:'#8b8aaa', fontSize: 13 }}>Pobieranie…</div>
+              <div className="text-muted text-sm animate-pulse">Pobieranie…</div>
             ) : context?.moonData ? (
               <>
-                <div style={{ textAlign:'center', padding:'10px 0 14px' }}>
-                  <div style={{ fontSize: 52, lineHeight: 1, filter:'drop-shadow(0 0 16px rgba(244,168,50,0.5))' }}>
+                <div className="text-center py-4 relative">
+                  <div className="absolute inset-0 bg-gold/5 blur-3xl rounded-full scale-150 group-hover:bg-gold/10 transition-colors"></div>
+                  <div className="text-6xl relative z-10 drop-shadow-[0_0_20px_rgba(244,168,50,0.5)] transform group-hover:scale-110 transition-transform duration-500">
                     {MOON_EMOJI[context.moonData.phase] ?? '🌙'}
                   </div>
-                  <div style={{ color:'#f0eeff', fontWeight: 700, fontSize: 17, marginTop: 10 }}>
+                  <div className="text-white font-bold text-xl mt-4 relative z-10 tracking-tight">
                     {MOON_PL[context.moonData.phase] ?? '—'}
                   </div>
-                  <div style={{ color:'#8b8aaa', fontSize: 12, marginTop: 4 }}>
-                    Oświetlenie: <span style={{ color:'#f4a832' }}>{context.moonData.illuminationPercent?.toFixed(0) ?? '?'}%</span>
+                  <div className="text-muted text-sm mt-1 relative z-10 font-medium italic">
+                    Oświetlenie: <span className="text-gold font-bold">{context.moonData.illuminationPercent?.toFixed(0) ?? '?'}%</span>
                   </div>
                 </div>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap: 8, marginTop: 4 }}>
+                <div className="grid grid-cols-2 gap-3 mt-4">
                   {[
                     { icon:'🌅', label:'Wschód', val: context.sunrise ?? '—' },
                     { icon:'🌇', label:'Zachód',  val: context.sunset  ?? '—' },
                   ].map((r, i) => (
-                    <div key={i} style={{ background:'rgba(255,255,255,0.04)', borderRadius: 12, padding:'10px 12px', border:'1px solid rgba(255,255,255,0.06)' }}>
-                      <div style={{ fontSize: 18 }}>{r.icon}</div>
-                      <div style={{ color:'#8b8aaa', fontSize: 10, marginTop: 4 }}>{r.label}</div>
-                      <div style={{ color:'#f0eeff', fontWeight: 600, fontSize: 12, marginTop: 2 }}>{r.val}</div>
+                    <div key={i} className="bg-white/5 rounded-2xl p-3 border border-white/5 group-hover:border-white/10 transition-colors">
+                      <div className="text-xl mb-1">{r.icon}</div>
+                      <div className="text-muted text-[10px] uppercase font-bold tracking-wider">{r.label}</div>
+                      <div className="text-[#f0eeff] font-bold text-[13px] mt-0.5">{r.val}</div>
                     </div>
                   ))}
                 </div>
               </>
             ) : (
-              <div style={{ color:'#8b8aaa', fontSize: 13 }}>Brak danych</div>
+              <div className="text-muted text-sm italic">Brak danych</div>
             )}
           </div>
         </div>
 
         {/* Weather / Biomet */}
-        <div style={glass}>
-          <div style={{ padding:'18px 20px' }}>
+        <div className="glass card-hover rounded-3xl overflow-hidden">
+          <div className="p-6">
             <CardHeader label="Biomet" />
             {ctxLoading ? (
-              <div style={{ color:'#8b8aaa', fontSize: 13 }}>Pobieranie…</div>
+              <div className="text-muted text-sm animate-pulse">Pobieranie…</div>
             ) : context?.weatherData ? (() => {
               const p = context.weatherData.pressureHpa;
               const sleepScore = p > 1013 ? 'Dobre warunki' : p > 1000 ? 'Umiarkowane' : 'Niskie ciśnienie';
-              const sleepColor = p > 1013 ? '#4ade80' : p > 1000 ? '#f4a832' : '#e879a0';
+              const sleepColor = p > 1013 ? 'text-teal' : p > 1000 ? 'text-gold' : 'text-pink';
               return (
                 <>
-                  <div style={{ display:'flex', flexDirection:'column', gap: 12, marginBottom: 16 }}>
+                  <div className="flex flex-col gap-4 mb-6">
                     {[
-                      { icon:'🌡️', label:'Temperatura',  val:`${context.weatherData.temperatureCelsius?.toFixed(1)}°C`, color:'#22d3ee' },
-                      { icon:'🔵', label:'Ciśnienie',     val:`${p?.toFixed(0)} hPa`,                                  color: p < 1000 ? '#e879a0' : '#c4baff' },
-                      { icon:'💧', label:'Wilgotność',    val:`${context.weatherData.humidity?.toFixed(0)}%`,           color:'#7c6af5' },
+                      { icon:'🌡️', label:'Temperatura',  val:`${context.weatherData.temperatureCelsius?.toFixed(1)}°C`, color:'text-teal' },
+                      { icon:'🔵', label:'Ciśnienie',     val:`${p?.toFixed(0)} hPa`,                                  color: p < 1000 ? 'text-pink' : 'text-accent' },
+                      { icon:'💧', label:'Wilgotność',    val:`${context.weatherData.humidity?.toFixed(0)}%`,           color:'text-accent' },
                     ].map((row, i) => (
-                      <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                        <div style={{ display:'flex', alignItems:'center', gap: 8 }}>
-                          <span style={{ fontSize: 16 }}>{row.icon}</span>
-                          <span style={{ color:'#8b8aaa', fontSize: 12 }}>{row.label}</span>
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg opacity-80">{row.icon}</span>
+                          <span className="text-muted text-[13px] font-medium">{row.label}</span>
                         </div>
-                        <span style={{ color: row.color, fontWeight: 700, fontSize: 14 }}>{row.val}</span>
+                        <span className={`${row.color} font-bold text-[15px]`}>{row.val}</span>
                       </div>
                     ))}
                   </div>
-                  <div style={{ background:'rgba(255,255,255,0.04)', borderRadius: 14, padding:'12px 14px', border:'1px solid rgba(255,255,255,0.06)', textAlign:'center' }}>
-                    <div style={{ fontSize: 22, marginBottom: 6 }}>🌙</div>
-                    <div style={{ color: sleepColor, fontWeight: 700, fontSize: 13 }}>{sleepScore}</div>
-                    <div style={{ color:'#8b8aaa', fontSize: 11, marginTop: 3 }}>do snu tej nocy</div>
+                  <div className="bg-white/5 rounded-2xl p-4 border border-white/5 text-center relative overflow-hidden group/item">
+                    <div className="absolute inset-0 bg-linear-to-b from-white/5 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity"></div>
+                    <div className="text-3xl mb-2 relative z-10 transition-transform group-hover/item:-translate-y-1">🌙</div>
+                    <div className={`${sleepColor} font-bold text-sm relative z-10 uppercase tracking-wide`}>{sleepScore}</div>
+                    <div className="text-muted/60 text-[11px] mt-1 relative z-10 font-medium">do snu tej nocy</div>
                   </div>
                 </>
               );
             })() : (
-              <div style={{ color:'#8b8aaa', fontSize: 13 }}>Brak danych pogodowych</div>
+              <div className="text-muted text-sm italic">Brak danych pogodowych</div>
             )}
           </div>
         </div>
 
         {/* Zodiac */}
-        <div style={glass}>
-          <div style={{ padding:'18px 20px' }}>
+        <div className="glass card-hover rounded-3xl overflow-hidden">
+          <div className="p-6">
             <CardHeader label="Zodiak" extra={zodiac.dates} />
-            <div style={{ textAlign:'center', padding:'8px 0 16px' }}>
-              <div style={{ fontSize: 44, lineHeight: 1, filter:'drop-shadow(0 0 14px rgba(232,121,160,0.5))' }}>
+            <div className="text-center py-2">
+              <div className="text-5xl mb-4 drop-shadow-[0_0_15px_rgba(232,121,160,0.4)] transform hover:scale-110 transition-transform cursor-default">
                 {zodiac.emoji}
               </div>
-              <div style={{ color:'#f0eeff', fontWeight: 700, fontSize: 18, marginTop: 10 }}>{zodiac.name}</div>
-              <Pill color="#e879a0">{zodiac.dates}</Pill>
+              <div className="text-white font-bold text-xl mb-2 tracking-tight">{zodiac.name}</div>
+              <div className="flex justify-center mb-6">
+                <Pill color="pink">{zodiac.dates}</Pill>
+              </div>
             </div>
-            <div style={{
-              background:'rgba(232,121,160,0.07)', border:'1px solid rgba(232,121,160,0.15)',
-              borderRadius: 14, padding:'12px 14px', marginTop: 4,
-            }}>
-              <div style={{ color:'#8b8aaa', fontSize: 10, fontWeight: 700, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom: 6 }}>Horoskop snu</div>
-              <div style={{ color:'#d0cff0', fontSize: 12, lineHeight: 1.6 }}>{horoscope}</div>
+            <div className="bg-pink/10 border border-pink/20 rounded-2xl p-4 relative group/hor">
+              <div className="absolute top-2 right-3 text-pink opacity-20 group-hover/hor:opacity-40 transition-opacity">✧</div>
+              <div className="text-pink/80 text-[10px] font-bold tracking-[0.15em] uppercase mb-2">Horoskop snu</div>
+              <div className="text-[#d0cff0] text-[13px] leading-relaxed font-medium">{horoscope}</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* ── Bottom row: chart + recent entries ── */}
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1.6fr', gap: 14 }}>
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.6fr] gap-6">
 
         {/* Sleep trend chart */}
-        <div style={glass}>
-          <div style={{ padding:'18px 20px' }}>
+        <div className="glass card-hover rounded-3xl overflow-hidden">
+          <div className="p-6">
             <CardHeader label="Trend jakości snu" extra="ostatnie 7 nocy" />
             {sleepChartData.length < 2 ? (
-              <div style={{ textAlign:'center', padding:'30px 0' }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>😴</div>
-                <div style={{ color:'#8b8aaa', fontSize: 12 }}>Dodaj wpisy snu, by zobaczyć trend</div>
+              <div className="text-center py-10">
+                <div className="text-4xl mb-4 grayscale opacity-50">😴</div>
+                <div className="text-muted text-sm italic">Dodaj wpisy snu, by zobaczyć trend</div>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height={130}>
-                <AreaChart data={sleepChartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
-                  <defs>
-                    <linearGradient id="sleepGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#7c6af5" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#7c6af5" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="val" stroke="#7c6af5" strokeWidth={2}
-                    fill="url(#sleepGrad)" dot={{ fill:'#7c6af5', r: 3, strokeWidth: 0 }} />
-                </AreaChart>
-              </ResponsiveContainer>
+              <div className="h-[140px] w-full mt-2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={sleepChartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+                    <defs>
+                      <linearGradient id="sleepGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%"  stopColor="#7c6af5" stopOpacity={0.5} />
+                        <stop offset="95%" stopColor="#7c6af5" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area type="monotone" dataKey="val" stroke="#7c6af5" strokeWidth={3}
+                      fill="url(#sleepGrad)" dot={{ fill:'#7c6af5', r: 4, strokeWidth: 2, stroke: '#050614' }}
+                      activeDot={{ r: 6, strokeWidth: 0, fill: '#fff', shadow: '0 0 10px #7c6af5' }} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
             )}
 
             {/* Mini stats */}
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap: 8, marginTop: 14 }}>
+            <div className="grid grid-cols-3 gap-3 mt-6">
               {[
-                { label:'Wpisy snu', val: sleepLogs.length, color:'#7c6af5' },
-                { label:'Nastroje',  val: moodLogs.length,  color:'#22d3ee' },
-                { label:'Sny',       val: dreamLogs.length, color:'#f4a832' },
+                { label:'Wpisy snu', val: sleepLogs.length, color:'text-accent', bg:'bg-accent/10' },
+                { label:'Nastroje',  val: moodLogs.length,  color:'text-teal', bg:'bg-teal/10' },
+                { label:'Sny',       val: dreamLogs.length, color:'text-gold', bg:'bg-gold/10' },
               ].map((s, i) => (
-                <div key={i} style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding:'10px 10px 8px', textAlign:'center' }}>
-                  <div style={{ color: s.color, fontWeight: 800, fontSize: 22, lineHeight: 1 }}>{s.val}</div>
-                  <div style={{ color:'#8b8aaa', fontSize: 10, marginTop: 4 }}>{s.label}</div>
+                <div key={i} className={`bg-white/5 border border-white/5 rounded-2xl p-3 text-center transition-transform hover:scale-105`}>
+                  <div className={`${s.color} font-black text-2xl leading-none`}>{s.val}</div>
+                  <div className="text-muted text-[10px] uppercase font-bold tracking-wider mt-2">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -298,67 +288,69 @@ export default function Dashboard() {
         </div>
 
         {/* Recent entries */}
-        <div style={glass}>
-          <div style={{ padding:'18px 20px 0' }}>
+        <div className="glass card-hover rounded-3xl overflow-hidden flex flex-col">
+          <div className="p-6 pb-2">
             <CardHeader label="Ostatnie wpisy" extra={
-              <Link to="/journal" style={{ color:'#7c6af5', textDecoration:'none', fontSize: 12, fontWeight: 600 }}>
-                Zobacz wszystkie →
+              <Link to="/journal" className="text-accent hover:text-white transition-colors no-underline text-xs font-bold flex items-center gap-1 group/link">
+                Wszystkie <span className="group-hover:translate-x-1 transition-transform">→</span>
               </Link>
             } />
           </div>
 
-          {recentAll.length === 0 ? (
-            <div style={{ textAlign:'center', padding:'30px 0 24px' }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>📖</div>
-              <div style={{ color:'#8b8aaa', fontSize: 12 }}>Brak wpisów. Zacznij prowadzić dziennik!</div>
-            </div>
-          ) : (
-            <div>
-              {recentAll.map((log, i) => {
-                const meta = {
-                  sleep: { icon:'😴', color:'#7c6af5', bg:'rgba(124,106,245,0.12)', label:'Sen',    detail: `Jakość: ${log.sleepQualityRating}/10` },
-                  mood:  { icon:'🌈', color:'#22d3ee', bg:'rgba(34,211,238,0.12)',  label:'Nastrój', detail: `Energia: ${log.energyLevel}/10` },
-                  dream: { icon:'🌙', color:'#f4a832', bg:'rgba(244,168,50,0.12)',  label:'Sen',     detail: log.dreamDescription?.slice(0, 40) + (log.dreamDescription?.length > 40 ? '…' : '') },
-                }[log.type];
-                return (
-                  <div key={log.id ?? i}
-                    style={{ display:'flex', alignItems:'center', gap: 12, padding:'12px 20px',
-                      borderBottom: i < recentAll.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                      transition:'background 0.15s',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.02)'}
-                    onMouseLeave={e => e.currentTarget.style.background='transparent'}
-                  >
-                    <div style={{ width: 38, height: 38, borderRadius: 12, flexShrink: 0,
-                      background: meta.bg, display:'flex', alignItems:'center', justifyContent:'center', fontSize: 18 }}>
-                      {meta.icon}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display:'flex', alignItems:'center', gap: 8 }}>
-                        <span style={{ color:'#f0eeff', fontWeight: 600, fontSize: 13 }}>{log.date}</span>
-                        <Pill color={meta.color}>{meta.label}</Pill>
-                        {log.hadNightmares && <Pill color="#e879a0">😱 koszmar</Pill>}
-                        {log.isRecurring   && <Pill color="#f4a832">🔁 powt.</Pill>}
+          <div className="flex-1">
+            {recentAll.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-4xl mb-4 grayscale opacity-30">📖</div>
+                <div className="text-muted text-sm italic">Brak wpisów. Zacznij prowadzić dziennik!</div>
+              </div>
+            ) : (
+              <div className="divide-y divide-white/5">
+                {recentAll.map((log, i) => {
+                  const meta = {
+                    sleep: { icon:'😴', color:'text-accent', bg:'bg-accent/10', label:'Sen',    detail: `Jakość: ${log.sleepQualityRating}/10` },
+                    mood:  { icon:'🌈', color:'text-teal', bg:'bg-teal/10',  label:'Nastrój', detail: `Energia: ${log.energyLevel}/10` },
+                    dream: { icon:'🌙', color:'text-gold', bg:'bg-gold/10',  label:'Zapis',     detail: log.dreamDescription?.slice(0, 50) + (log.dreamDescription?.length > 50 ? '…' : '') },
+                  }[log.type];
+                  return (
+                    <div key={log.id ?? i}
+                      className="group/item flex items-center gap-4 px-6 py-4 hover:bg-white/3 transition-colors cursor-pointer"
+                    >
+                      <div className={`w-11 h-11 rounded-xl shadow-inner ${meta.bg} flex items-center justify-center text-xl shrink-0 group-hover/item:scale-110 transition-transform`}>
+                        {meta.icon}
                       </div>
-                      <div style={{ color:'#8b8aaa', fontSize: 12, marginTop: 3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-                        {meta.detail}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-white font-bold text-sm">{log.date}</span>
+                          <Pill color={log.type === 'sleep' ? 'accent' : log.type === 'mood' ? 'teal' : 'gold'}>{meta.label}</Pill>
+                          {log.hadNightmares && <Pill color="pink">Koszmar</Pill>}
+                        </div>
+                        <div className="text-muted text-xs font-medium truncate opacity-70 group-hover/item:opacity-100 transition-opacity">
+                          {meta.detail}
+                        </div>
+                      </div>
+                      <div className="text-white/10 group-hover/item:text-accent transition-colors text-xl font-light pl-2">
+                        <span className="transform group-hover/item:translate-x-1 inline-block transition-transform">›</span>
                       </div>
                     </div>
-                    <div style={{ color:'#2a2b45', fontSize: 18, flexShrink: 0 }}>›</div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* ── Footer ── */}
-      <div style={{ textAlign:'center', padding:'4px 0 2px', borderTop:'1px solid rgba(255,255,255,0.04)', marginTop: 4 }}>
-        <span style={{ color:'#8b8aaa', fontSize: 11 }}>
-          🌙 Dream Catcher &nbsp;·&nbsp; {new Date().getFullYear()} &nbsp;·&nbsp; holistic sleep & mood journal
-        </span>
-      </div>
+      <footer className="mt-12 pt-8 border-t border-white/5 text-center flex flex-col items-center gap-4">
+        <div className="flex items-center gap-6">
+          {['Privacy', 'Terms', 'Support'].map(item => (
+            <a key={item} href="#" className="text-muted/60 hover:text-accent text-[11px] font-bold tracking-widest uppercase transition-colors no-underline">{item}</a>
+          ))}
+        </div>
+        <p className="text-muted/40 text-[10px] font-medium tracking-wide">
+          © {new Date().getFullYear()} DREAM CATCHER · HOLISTIC SLEEP & MOOD TRACKING
+        </p>
+      </footer>
 
     </div>
   );

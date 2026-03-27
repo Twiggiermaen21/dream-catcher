@@ -25,13 +25,17 @@ export default function MoonPhaseIcon({ phase, illumination, size = 32 }) {
   const label = PHASE_LABEL[phase] ?? phase;
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} title={label}>
-      <span style={{ fontSize: size }}>{emoji}</span>
-      <div>
-        <div style={{ fontWeight: 600 }}>{label}</div>
+    <div className="flex items-center gap-3 group px-1" title={label}>
+      <span className="shrink-0 drop-shadow-glow-purple group-hover:scale-110 transition-transform cursor-default" style={{ fontSize: size }}>
+        {emoji}
+      </span>
+      <div className="flex flex-col">
+        <div className="text-white text-sm font-black tracking-tight uppercase tracking-widest text-[11px] opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+          {label}
+        </div>
         {illumination != null && (
-          <div style={{ fontSize: 12, color: '#888' }}>
-            {illumination.toFixed(0)}% oświetlenia
+          <div className="text-muted text-[10px] font-bold tracking-widest uppercase opacity-60">
+            {illumination.toFixed(0)}% ILluminacji
           </div>
         )}
       </div>

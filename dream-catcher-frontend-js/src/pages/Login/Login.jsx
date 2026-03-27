@@ -2,30 +2,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
-const inputCls = `w-full px-4 py-3 rounded-xl text-sm outline-none transition-all text-white placeholder-[#8b8aaa]`;
-const inputStyle = {
-  background: 'rgba(255,255,255,0.05)',
-  border: '1px solid rgba(255,255,255,0.1)',
-};
-const inputFocusStyle = {
-  background: 'rgba(124,106,245,0.08)',
-  border: '1px solid rgba(124,106,245,0.5)',
-};
-
 function DarkInput({ type, placeholder, value, onChange, required, minLength }) {
-  const [focused, setFocused] = useState(false);
   return (
     <input
-      className={inputCls}
-      style={focused ? inputFocusStyle : inputStyle}
+      className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all text-white placeholder-muted/50 bg-white/5 border border-white/10 focus:border-accent/50 focus:bg-white/10 focus:ring-1 focus:ring-accent/20 font-medium"
       type={type}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
       required={required}
       minLength={minLength}
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
     />
   );
 }
@@ -53,54 +39,63 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[#050614]">
+      {/* Dynamic Background elements */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+      <div className="w-full max-w-sm relative z-10">
 
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4">🌙</div>
-          <h1 className="text-2xl font-bold text-white tracking-wide">Dream Catcher</h1>
-          <p className="text-sm mt-2" style={{ color: '#8b8aaa' }}>Twój holistyczny dziennik snu i marzeń</p>
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-white/5 border border-white/10 shadow-2xl mb-6 relative group overflow-hidden">
+            <div className="absolute inset-0 bg-linear-to-br from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <span className="text-5xl drop-shadow-glow-purple group-hover:scale-110 transition-transform">🌙</span>
+          </div>
+          <h1 className="text-4xl font-black text-white tracking-tighter mb-2">Dream Catcher</h1>
+          <p className="text-muted text-sm font-medium tracking-wide opacity-80 uppercase tracking-widest text-[10px]">Twój holistyczny dziennik snu i marzeń</p>
         </div>
 
         {/* Card */}
-        <div
-          className="rounded-2xl overflow-hidden"
-          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(16px)' }}
-        >
+        <div className="glass rounded-3xl overflow-hidden shadow-2xl border-white/10">
           {/* Tabs */}
-          <div className="flex" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-            {[['login','Logowanie'],['register','Rejestracja']].map(([key, label]) => (
-              <button key={key} onClick={() => { setMode(key); setError(''); }}
-                className="flex-1 py-4 text-sm border-none cursor-pointer transition-all bg-transparent"
-                style={mode === key
-                  ? { color: '#c4baff', fontWeight: 600, borderBottom: '2px solid #7c6af5' }
-                  : { color: '#8b8aaa' }
-                }>
-                {label}
+          <div className="flex bg-white/2 border-b border-white/5">
+            {[
+              { key: 'login', label: 'Logowanie' },
+              { key: 'register', label: 'Rejestracja' }
+            ].map((tab) => (
+              <button key={tab.key} onClick={() => { setMode(tab.key); setError(''); }}
+                className={`
+                  flex-1 py-4 text-sm font-bold tracking-wide border-none cursor-pointer transition-all bg-transparent relative
+                  ${mode === tab.key ? 'text-white' : 'text-muted hover:text-white/70'}
+                `}>
+                {tab.label}
+                {mode === tab.key && (
+                  <div className="absolute bottom-0 left-8 right-8 h-1 bg-accent shadow-glow-purple rounded-full"></div>
+                )}
               </button>
             ))}
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="p-8 flex flex-col gap-6">
 
             {mode === 'register' && (
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-medium" style={{ color: '#8b8aaa' }}>Imię / Nick</label>
+                <label className="text-[11px] font-bold text-muted uppercase tracking-wider px-1">Imię / Nick</label>
                 <DarkInput type="text" placeholder="Jak mamy się do Ciebie zwracać?"
                   value={form.displayName} onChange={e => set('displayName', e.target.value)} required />
               </div>
             )}
 
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-medium" style={{ color: '#8b8aaa' }}>E-mail</label>
+              <label className="text-[11px] font-bold text-muted uppercase tracking-wider px-1">E-mail</label>
               <DarkInput type="email" placeholder="twoj@email.com"
                 value={form.email} onChange={e => set('email', e.target.value)} required />
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-medium" style={{ color: '#8b8aaa' }}>Hasło</label>
+              <label className="text-[11px] font-bold text-muted uppercase tracking-wider px-1">Hasło</label>
               <DarkInput type="password"
                 placeholder={mode === 'register' ? 'Minimum 6 znaków' : '••••••••'}
                 value={form.password} onChange={e => set('password', e.target.value)}
@@ -108,26 +103,33 @@ export default function Login() {
             </div>
 
             {error && (
-              <div className="px-4 py-3 rounded-xl text-sm"
-                style={{ background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)', color: '#fca5a5' }}>
+              <div className="px-4 py-3 rounded-xl text-xs font-bold bg-pink/10 border border-pink/20 text-pink text-center animate-shake">
                 {error}
               </div>
             )}
 
             <button type="submit" disabled={loading}
-              className="w-full py-3.5 text-sm font-semibold rounded-xl transition-all cursor-pointer border-none mt-1 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ background: 'linear-gradient(135deg, #7c6af5 0%, #5b4bc4 100%)', boxShadow: '0 4px 20px rgba(124,106,245,0.3)' }}>
-              {loading ? 'Ładowanie…' : mode === 'login' ? 'Zaloguj się' : 'Utwórz konto'}
+              className="w-full py-4 text-sm font-black rounded-2xl transition-all cursor-pointer border-none mt-2 text-white bg-linear-to-r from-accent to-[#5b4bc4] shadow-[0_8px_30px_rgba(124,106,245,0.4)] hover:shadow-[0_12px_40px_rgba(124,106,245,0.5)] hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest">
+              {loading ? 'Uwierzytelnianie…' : mode === 'login' ? 'Zaloguj się' : 'Utwórz konto'}
             </button>
 
             {mode === 'login' && (
-              <p className="text-center text-xs leading-relaxed" style={{ color: '#8b8aaa' }}>
-                Konto demo:<br />
-                <span style={{ color: '#c4baff' }}>user@dreamcatcher.app</span> / <span style={{ color: '#c4baff' }}>User1234!</span>
-              </p>
+              <div className="mt-2 p-4 rounded-2xl bg-white/3 border border-white/5">
+                <p className="text-center text-[10px] uppercase font-bold tracking-widest text-muted mb-2">
+                  Konto demo:
+                </p>
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-accent text-[11px] font-black tracking-tight">user@dreamcatcher.app</span>
+                  <span className="text-accent text-[11px] font-black tracking-tight">User1234!</span>
+                </div>
+              </div>
             )}
           </form>
         </div>
+
+        <p className="text-center mt-10 text-[10px] font-bold text-muted/40 uppercase tracking-[0.2em]">
+          DREAM CATCHER · Holistics v4
+        </p>
       </div>
     </div>
   );

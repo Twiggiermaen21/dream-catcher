@@ -17,35 +17,42 @@ export default function NewEntry() {
   const navigate = useNavigate();
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={card}>
+    <div className="glass rounded-3xl overflow-hidden max-w-2xl mx-auto shadow-2xl relative">
+      <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none text-6xl">
+        {TABS.find(t => t.key === activeTab)?.icon}
+      </div>
 
       {/* Header */}
-      <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="text-sm font-semibold text-white">Nowy wpis</div>
-        <div className="text-xs mt-0.5" style={{ color: '#8b8aaa' }}>
+      <div className="px-8 py-6 border-b border-white/5 bg-white/2">
+        <div className="text-white text-lg font-bold tracking-tight uppercase tracking-widest text-xs opacity-60 mb-1">Nowy wpis</div>
+        <div className="text-white text-2xl font-black">
           {new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' })}
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex px-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="flex px-4 border-b border-white/5 bg-white/1">
         {TABS.map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-            className="flex items-center gap-1.5 px-4 py-3 text-sm border-none bg-transparent cursor-pointer transition-all -mb-px"
-            style={activeTab === tab.key
-              ? { color: '#c4baff', fontWeight: 600, borderBottom: '2px solid #7c6af5' }
-              : { color: '#8b8aaa', borderBottom: '2px solid transparent' }
-            }>
+            className={`
+              flex items-center gap-2 px-6 py-4 text-sm font-bold tracking-wide border-none bg-transparent cursor-pointer transition-all relative
+              ${activeTab === tab.key ? 'text-white' : 'text-muted hover:text-white/70'}
+            `}>
             {tab.icon} {tab.label}
+            {activeTab === tab.key && (
+              <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-accent shadow-glow-purple rounded-full"></div>
+            )}
           </button>
         ))}
       </div>
 
       {/* Form */}
-      <div className="p-6">
-        {activeTab === 'sleep' && <SleepLogForm onSuccess={() => navigate('/journal')} />}
-        {activeTab === 'mood'  && <MoodLogForm  onSuccess={() => navigate('/journal')} />}
-        {activeTab === 'dream' && <DreamLogForm onSuccess={() => navigate('/journal')} />}
+      <div className="p-8">
+        <div className="bg-white/3 rounded-2xl p-0.5 mb-2">
+          {activeTab === 'sleep' && <SleepLogForm onSuccess={() => navigate('/journal')} />}
+          {activeTab === 'mood'  && <MoodLogForm  onSuccess={() => navigate('/journal')} />}
+          {activeTab === 'dream' && <DreamLogForm onSuccess={() => navigate('/journal')} />}
+        </div>
       </div>
     </div>
   );

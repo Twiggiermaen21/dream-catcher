@@ -17,40 +17,24 @@ function Sidebar() {
   const { user, logout } = useAuthStore();
 
   return (
-    <aside style={{
-      width: 230,
-      minWidth: 230,
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      background: 'rgba(255,255,255,0.03)',
-      borderRight: '1px solid rgba(255,255,255,0.06)',
-      backdropFilter: 'blur(20px)',
-      position: 'sticky',
-      top: 0,
-    }}>
+    <aside className="w-[260px] min-w-[260px] h-screen flex flex-col glass border-r-0 sticky top-0 z-50">
 
       {/* Brand */}
-      <div style={{ padding: '28px 20px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 38, height: 38, borderRadius: 12,
-            background: 'linear-gradient(135deg, rgba(124,106,245,0.4), rgba(80,60,200,0.4))',
-            border: '1px solid rgba(124,106,245,0.3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 18,
-            boxShadow: '0 0 20px rgba(124,106,245,0.2)',
-          }}>🌙</div>
+      <div className="p-8 pb-6 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-accent/40 to-accent/10 border border-accent/30 flex items-center justify-center text-xl shadow-glow-purple">
+            🌙
+          </div>
           <div>
-            <div style={{ color: '#f0eeff', fontWeight: 700, fontSize: 14, letterSpacing: '0.02em' }}>Dream Catcher</div>
-            <div style={{ color: '#8b8aaa', fontSize: 11, marginTop: 1 }}>holistic journal</div>
+            <div className="text-[#f0eeff] font-bold text-sm tracking-wide">Dream Catcher</div>
+            <div className="text-muted text-[11px] mt-0.5">holistic journal</div>
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <div style={{ color: '#8b8aaa', fontSize: 10, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '8px 10px 6px' }}>
+      <nav className="flex-1 p-4 flex flex-col gap-1">
+        <div className="text-muted text-[10px] font-bold tracking-widest uppercase px-3 mb-2">
           Nawigacja
         </div>
         {NAV.map(item => (
@@ -58,32 +42,28 @@ function Sidebar() {
             key={item.to}
             to={item.to}
             end={item.end}
-            style={({ isActive }) => ({
-              display: 'flex', alignItems: 'center', gap: 12,
-              padding: '10px 12px', borderRadius: 12,
-              textDecoration: 'none', transition: 'all 0.15s',
-              ...(isActive
-                ? { background: 'rgba(124,106,245,0.18)', boxShadow: 'inset 0 0 0 1px rgba(124,106,245,0.28)' }
-                : { background: 'transparent' }
-              )
-            })}
+            className={({ isActive }) => `
+              flex items-center gap-3 p-3 rounded-2xl transition-all duration-300 group
+              ${isActive 
+                ? 'bg-accent/15 border border-accent/25 shadow-glow-purple' 
+                : 'hover:bg-white/5 border border-transparent'}
+            `}
           >
             {({ isActive }) => (
               <>
-                <div style={{
-                  width: 34, height: 34, borderRadius: 10,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 16, flexShrink: 0,
-                  background: isActive ? 'rgba(124,106,245,0.25)' : 'rgba(255,255,255,0.05)',
-                  border: isActive ? '1px solid rgba(124,106,245,0.35)' : '1px solid rgba(255,255,255,0.06)',
-                }}>
+                <div className={`
+                  w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 transition-all duration-300
+                  ${isActive 
+                    ? 'bg-accent/20 border border-accent/30 text-white' 
+                    : 'bg-white/5 border border-white/5 text-muted group-hover:text-white'}
+                `}>
                   {item.icon}
                 </div>
                 <div>
-                  <div style={{ color: isActive ? '#c4baff' : '#d0cff0', fontWeight: isActive ? 600 : 400, fontSize: 13 }}>
+                  <div className={`text-[13px] transition-colors duration-300 ${isActive ? 'text-white font-semibold' : 'text-muted group-hover:text-[#d0cff0]'}`}>
                     {item.label}
                   </div>
-                  <div style={{ color: '#8b8aaa', fontSize: 11, marginTop: 1 }}>{item.sub}</div>
+                  <div className="text-muted/60 text-[11px] mt-0.5 font-medium">{item.sub}</div>
                 </div>
               </>
             )}
@@ -93,29 +73,18 @@ function Sidebar() {
 
       {/* User */}
       {user && (
-        <div style={{ padding: '12px 10px 20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            padding: '10px 12px', borderRadius: 12,
-            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-          }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 10,
-              background: 'linear-gradient(135deg, #7c6af5, #e879a0)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'white', fontSize: 13, fontWeight: 700, flexShrink: 0,
-            }}>
+        <div className="p-4 mb-4 border-t border-white/5">
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10 glass">
+            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-accent to-pink flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-glow-pink">
               {(user.displayName?.[0] ?? user.email?.[0] ?? '?').toUpperCase()}
             </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ color: '#f0eeff', fontSize: 12, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div className="flex-1 min-w-0">
+              <div className="text-[#f0eeff] text-xs font-semibold truncate">
                 {user.displayName ?? user.email}
               </div>
               <button
                 onClick={logout}
-                style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#8b8aaa', fontSize: 11, marginTop: 1 }}
-                onMouseEnter={e => e.currentTarget.style.color = '#e879a0'}
-                onMouseLeave={e => e.currentTarget.style.color = '#8b8aaa'}
+                className="text-muted hover:text-pink text-[11px] mt-0.5 transition-colors cursor-pointer bg-transparent border-none p-0"
               >
                 Wyloguj →
               </button>
@@ -129,9 +98,9 @@ function Sidebar() {
 
 function AppLayout() {
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <div className="flex bg-page h-screen overflow-hidden">
       <Sidebar />
-      <main style={{ flex: 1, overflowY: 'auto', padding: '28px 28px 28px 24px' }}>
+      <main className="flex-1 overflow-y-auto px-10 py-8 scroll-smooth">
         <Routes>
           <Route path="/"          element={<Dashboard />} />
           <Route path="/journal"   element={<Journal />} />

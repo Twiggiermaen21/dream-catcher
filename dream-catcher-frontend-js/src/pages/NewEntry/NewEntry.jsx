@@ -5,45 +5,48 @@ import MoodLogForm  from '../../components/logs/MoodLogForm/MoodLogForm';
 import DreamLogForm from '../../components/logs/DreamLogForm/DreamLogForm';
 
 const TABS = [
-  { key: 'sleep', label: '😴 Sen' },
-  { key: 'mood',  label: '🌈 Nastrój' },
-  { key: 'dream', label: '🌙 Marzenie senne' },
+  { key: 'sleep', icon: '😴', label: 'Sen' },
+  { key: 'mood',  icon: '🌈', label: 'Nastrój' },
+  { key: 'dream', icon: '🌙', label: 'Marzenie senne' },
 ];
-
-const ZODIAC_SIGN = 'aries';
 
 export default function NewEntry() {
   const [activeTab, setActiveTab] = useState('sleep');
   const navigate = useNavigate();
 
-  const onSuccess = () => navigate('/journal');
-
   return (
-    <div style={{ padding: 24, maxWidth: 700, margin: '0 auto' }}>
-      <h2>Nowy wpis</h2>
+    <div className="card" style={{ overflow: 'hidden' }}>
+
+      {/* Header */}
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ fontWeight: 600, fontSize: 15 }}>Nowy wpis</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>
+          {new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' })}
+        </div>
+      </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 0, marginBottom: 24, borderBottom: '2px solid #dee2e6' }}>
-        {TABS.map((tab) => (
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', padding: '0 8px' }}>
+        {TABS.map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-            padding: '10px 20px',
-            border: 'none',
-            borderBottom: activeTab === tab.key ? '2px solid #6f42c1' : '2px solid transparent',
-            background: 'transparent',
-            fontWeight: activeTab === tab.key ? 700 : 400,
-            color: activeTab === tab.key ? '#6f42c1' : '#6c757d',
-            cursor: 'pointer',
-            fontSize: 15,
-            marginBottom: -2,
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '12px 16px', border: 'none', background: 'transparent',
+            fontSize: 13, fontWeight: activeTab === tab.key ? 600 : 400,
+            color: activeTab === tab.key ? 'var(--text-primary)' : 'var(--text-muted)',
+            borderBottom: activeTab === tab.key ? '2px solid var(--text-primary)' : '2px solid transparent',
+            marginBottom: -1, cursor: 'pointer',
           }}>
-            {tab.label}
+            {tab.icon} {tab.label}
           </button>
         ))}
       </div>
 
-      {activeTab === 'sleep' && <SleepLogForm zodiacSign={ZODIAC_SIGN} onSuccess={onSuccess} />}
-      {activeTab === 'mood'  && <MoodLogForm  zodiacSign={ZODIAC_SIGN} onSuccess={onSuccess} />}
-      {activeTab === 'dream' && <DreamLogForm zodiacSign={ZODIAC_SIGN} onSuccess={onSuccess} />}
+      {/* Form */}
+      <div style={{ padding: 24 }}>
+        {activeTab === 'sleep' && <SleepLogForm onSuccess={() => navigate('/journal')} />}
+        {activeTab === 'mood'  && <MoodLogForm  onSuccess={() => navigate('/journal')} />}
+        {activeTab === 'dream' && <DreamLogForm onSuccess={() => navigate('/journal')} />}
+      </div>
     </div>
   );
 }

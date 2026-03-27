@@ -1,48 +1,96 @@
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Journal   from './pages/Journal/Journal';
 import NewEntry  from './pages/NewEntry/NewEntry';
 import Insights  from './pages/Insights/Insights';
+import Login     from './pages/Login/Login';
+import { useAuthStore } from './store/authStore';
 
-const navStyle = ({ isActive }) => ({
-  padding: '8px 16px',
-  textDecoration: 'none',
-  color: isActive ? '#6f42c1' : '#6c757d',
-  fontWeight: isActive ? 700 : 400,
-  borderBottom: isActive ? '2px solid #6f42c1' : '2px solid transparent',
-});
+const NAV_ITEMS = [
+  { to: '/',          icon: '✦',  label: 'Przegląd' },
+  { to: '/journal',   icon: '📖', label: 'Dziennik' },
+  { to: '/new-entry', icon: '+',  label: 'Nowy wpis' },
+  { to: '/insights',  icon: '📊', label: 'Insights' },
+];
 
-function App() {
+function AppLayout() {
+  const { user, logout } = useAuthStore();
+
   return (
-    <BrowserRouter>
-      <nav style={{
-        display: 'flex',
-        gap: 4,
-        padding: '12px 24px',
-        borderBottom: '1px solid #dee2e6',
-        background: '#fff',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        alignItems: 'center',
-      }}>
-        <span style={{ fontWeight: 800, fontSize: 20, marginRight: 24 }}>🌙 Dream Catcher</span>
-        <NavLink to="/"          style={navStyle}>Dashboard</NavLink>
-        <NavLink to="/journal"   style={navStyle}>Dziennik</NavLink>
-        <NavLink to="/new-entry" style={navStyle}>+ Nowy wpis</NavLink>
-        <NavLink to="/insights"  style={navStyle}>Insights</NavLink>
-      </nav>
+    <div style={{ display: 'flex', minHeight: '100vh', padding: 24, gap: 16, alignItems: 'flex-start' }}>
 
-      <main style={{ minHeight: 'calc(100vh - 56px)', background: '#f8f9fa' }}>
+      {/* Sidebar */}
+      <div className="card" style={{ width: 200, flexShrink: 0, padding: 12, position: 'sticky', top: 24 }}>
+        {/* Logo */}
+        <div style={{ padding: '8px 12px 16px', borderBottom: '1px solid var(--border)', marginBottom: 8 }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            🌙 <span>Dream Catcher</span>
+          </div>
+          {user && (
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
+              {user.displayName}
+            </div>
+          )}
+        </div>
+
+        {/* Nav */}
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {NAV_ITEMS.map(item => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === '/'}
+              className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+            >
+              <span style={{ fontSize: 16, width: 20, textAlign: 'center' }}>{item.icon}</span>
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Logout */}
+        {user && (
+          <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+            <button
+              onClick={logout}
+              className="btn btn-ghost"
+              style={{ width: '100%', justifyContent: 'center', fontSize: 13 }}
+            >
+              Wyloguj
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Main content */}
+      <div style={{ flex: 1, minWidth: 0 }}>
         <Routes>
           <Route path="/"          element={<Dashboard />} />
           <Route path="/journal"   element={<Journal />} />
           <Route path="/new-entry" element={<NewEntry />} />
           <Route path="/insights"  element={<Insights />} />
         </Routes>
-      </main>
-    </BrowserRouter>
+      </div>
+    </div>
   );
 }
 
-export default App
+function ProtectedRoute({ children }) {
+  const { token } = useAuthStore();
+  return token ? children : <Navigate to="/login" replace />;
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/*" element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        } />
+      </Routes>
+    </BrowserRouter>
+  );
+}

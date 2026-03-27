@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: dream-catcher-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/dreamcatcher
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true 
+
+  cache:
+    type: simple
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.dreamcatcher: DEBUG
+    org.springframework.web: INFO
+
+external-api:
+  weatherapi:
+    base-url: https://api.weatherapi.com/v1
+    api-key: ${WEATHERAPI_KEY:}

@@ -9,12 +9,17 @@ const TABS = [
 
 const MOON_EMOJI = { NEW_MOON:'🌑', WAXING_CRESCENT:'🌒', FIRST_QUARTER:'🌓', WAXING_GIBBOUS:'🌔', FULL_MOON:'🌕', WANING_GIBBOUS:'🌖', LAST_QUARTER:'🌗', WANING_CRESCENT:'🌘' };
 
-function Tag({ children, active }) {
+const card = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(12px)' };
+
+function Tag({ children, accent }) {
   return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border
-      ${active
-        ? 'bg-violet-100 text-violet-700 border-violet-200'
-        : 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+    <span
+      className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
+      style={accent
+        ? { background: 'rgba(124,106,245,0.15)', color: '#c4baff', border: '1px solid rgba(124,106,245,0.25)' }
+        : { background: 'rgba(255,255,255,0.06)', color: '#8b8aaa', border: '1px solid rgba(255,255,255,0.08)' }
+      }
+    >
       {children}
     </span>
   );
@@ -33,58 +38,65 @@ export default function Journal() {
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+    <div className="rounded-2xl overflow-hidden" style={card}>
 
       {/* Search bar */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
-        <span className="text-gray-400 text-sm">🔍</span>
+      <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <span className="text-sm" style={{ color: '#8b8aaa' }}>🔍</span>
         <input
-          className="flex-1 text-sm bg-transparent outline-none placeholder-gray-400"
+          className="flex-1 text-sm bg-transparent outline-none text-white"
           placeholder="Szukaj w dzienniku…"
+          style={{ caretColor: '#7c6af5' }}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
         {search && (
-          <button onClick={() => setSearch('')} className="text-gray-400 hover:text-gray-600 text-sm leading-none border-none bg-transparent cursor-pointer">✕</button>
+          <button onClick={() => setSearch('')} className="text-sm leading-none border-none bg-transparent cursor-pointer transition-colors"
+            style={{ color: '#8b8aaa' }}>✕</button>
         )}
       </div>
 
       {/* Tabs */}
-      <div className="flex px-2 border-b border-gray-100">
+      <div className="flex px-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         {TABS.map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-1.5 px-3.5 py-3 text-sm border-none bg-transparent cursor-pointer transition-colors -mb-px
-              ${activeTab === tab.key
-                ? 'font-semibold text-gray-900 border-b-2 border-gray-900'
-                : 'font-normal text-gray-400 hover:text-gray-600 border-b-2 border-transparent'}`}>
+            className="flex items-center gap-1.5 px-4 py-3 text-sm border-none bg-transparent cursor-pointer transition-all -mb-px"
+            style={activeTab === tab.key
+              ? { color: '#c4baff', fontWeight: 600, borderBottom: '2px solid #7c6af5' }
+              : { color: '#8b8aaa', borderBottom: '2px solid transparent' }
+            }>
             {tab.icon} {tab.label}
           </button>
         ))}
       </div>
 
-      {/* States */}
       {loading && (
-        <div className="px-5 py-6 text-sm text-gray-400">Ładowanie…</div>
+        <div className="px-5 py-6 text-sm" style={{ color: '#8b8aaa' }}>Ładowanie…</div>
       )}
 
       {!loading && filtered.length === 0 && (
         <div className="py-16 text-center">
           <div className="text-4xl mb-3">{TABS.find(t => t.key === activeTab)?.icon}</div>
-          <div className="text-sm text-gray-400">Brak wpisów. Zacznij prowadzić dziennik!</div>
+          <div className="text-sm" style={{ color: '#8b8aaa' }}>Brak wpisów. Zacznij prowadzić dziennik!</div>
         </div>
       )}
 
       {/* Sleep list */}
-      {activeTab === 'sleep' && filtered.map(log => (
-        <div key={log.id} className="flex items-center gap-3.5 px-5 py-3.5 border-b border-gray-100 last:border-none hover:bg-gray-50 transition-colors">
-          <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center text-lg shrink-0">😴</div>
+      {activeTab === 'sleep' && filtered.map((log, i) => (
+        <div key={log.id} className="flex items-center gap-3.5 px-5 py-3.5 transition-all"
+          style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0"
+            style={{ background: 'rgba(124,106,245,0.15)' }}>😴</div>
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-900">{log.date}</span>
-              <span className="text-xs text-gray-400">{log.bedtime} → {log.wakeTime}</span>
+              <span className="text-sm font-medium text-white">{log.date}</span>
+              <span className="text-xs" style={{ color: '#8b8aaa' }}>{log.bedtime} → {log.wakeTime}</span>
             </div>
             <div className="flex gap-1.5 mt-1.5 flex-wrap">
-              <Tag active>⭐ {log.sleepQualityRating}/10</Tag>
+              <Tag accent>⭐ {log.sleepQualityRating}/10</Tag>
               {log.hadNightmares && <Tag>😱 Koszmary</Tag>}
               {log.environmentalContext?.moonData?.phase && (
                 <Tag>{MOON_EMOJI[log.environmentalContext.moonData.phase]} {log.environmentalContext.moonData.phase?.replace('_', ' ')}</Tag>
@@ -96,37 +108,47 @@ export default function Journal() {
       ))}
 
       {/* Mood list */}
-      {activeTab === 'mood' && filtered.map(log => (
-        <div key={log.id} className="flex items-center gap-3.5 px-5 py-3.5 border-b border-gray-100 last:border-none hover:bg-gray-50 transition-colors">
-          <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-lg shrink-0">🌈</div>
+      {activeTab === 'mood' && filtered.map((log, i) => (
+        <div key={log.id} className="flex items-center gap-3.5 px-5 py-3.5 transition-all"
+          style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0"
+            style={{ background: 'rgba(34,211,238,0.15)' }}>🌈</div>
           <div className="flex-1 min-w-0">
             <div className="flex justify-between">
-              <span className="text-sm font-medium text-gray-900">{log.date}</span>
-              <span className="text-xs text-gray-400">⚡ {log.energyLevel}/10</span>
+              <span className="text-sm font-medium text-white">{log.date}</span>
+              <span className="text-xs" style={{ color: '#8b8aaa' }}>⚡ {log.energyLevel}/10</span>
             </div>
             <div className="flex gap-1.5 mt-1.5">
               <Tag>Rano: {log.morningMood}</Tag>
-              <Tag active>Wieczór: {log.eveningMood}</Tag>
+              <Tag accent>Wieczór: {log.eveningMood}</Tag>
             </div>
             {log.notes && (
-              <div className="text-xs text-gray-400 mt-1 truncate">{log.notes}</div>
+              <div className="text-xs mt-1 truncate" style={{ color: '#8b8aaa' }}>{log.notes}</div>
             )}
           </div>
         </div>
       ))}
 
       {/* Dream list */}
-      {activeTab === 'dream' && filtered.map(log => (
-        <div key={log.id} className="flex items-center gap-3.5 px-5 py-3.5 border-b border-gray-100 last:border-none hover:bg-gray-50 transition-colors">
-          <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-lg shrink-0">🌙</div>
+      {activeTab === 'dream' && filtered.map((log, i) => (
+        <div key={log.id} className="flex items-center gap-3.5 px-5 py-3.5 transition-all"
+          style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0"
+            style={{ background: 'rgba(244,168,50,0.15)' }}>🌙</div>
           <div className="flex-1 min-w-0">
             <div className="flex justify-between">
-              <span className="text-sm font-medium text-gray-900">{log.date}</span>
+              <span className="text-sm font-medium text-white">{log.date}</span>
               {log.isRecurring && <Tag>🔁 Powracający</Tag>}
             </div>
-            <div className="text-xs text-gray-500 mt-1 truncate">{log.dreamDescription}</div>
+            <div className="text-xs mt-1 truncate" style={{ color: '#8b8aaa' }}>{log.dreamDescription}</div>
             <div className="flex gap-1.5 mt-1.5 flex-wrap">
-              <Tag active>{log.clarity}</Tag>
+              <Tag accent>{log.clarity}</Tag>
               <Tag>{log.sentiment}</Tag>
               {log.symbols?.slice(0, 3).map(s => <Tag key={s}>{s}</Tag>)}
             </div>

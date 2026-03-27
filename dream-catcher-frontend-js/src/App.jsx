@@ -7,23 +7,26 @@ import Login     from './pages/Login/Login';
 import { useAuthStore } from './store/authStore';
 
 const NAV = [
-  { to: '/',          icon: '✦',  label: 'Przegląd',  end: true },
+  { to: '/',          icon: '🌙', label: 'Przegląd',  end: true },
   { to: '/journal',   icon: '📖', label: 'Dziennik' },
-  { to: '/new-entry', icon: '+',  label: 'Nowy wpis' },
-  { to: '/insights',  icon: '📊', label: 'Insights' },
+  { to: '/new-entry', icon: '✦',  label: 'Nowy wpis' },
+  { to: '/insights',  icon: '✧',  label: 'Insights' },
 ];
 
 function Sidebar() {
   const { user, logout } = useAuthStore();
   return (
-    <aside className="w-48 shrink-0 sticky top-6 self-start bg-white rounded-2xl shadow-sm overflow-hidden">
+    <aside
+      className="w-52 shrink-0 sticky top-6 self-start rounded-2xl overflow-hidden"
+      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(12px)' }}
+    >
       {/* Logo */}
-      <div className="px-4 py-4 border-b border-gray-100">
-        <div className="flex items-center gap-2 font-bold text-gray-900">
+      <div className="px-4 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="flex items-center gap-2 font-bold text-white text-sm tracking-wide">
           🌙 <span>Dream Catcher</span>
         </div>
         {user && (
-          <div className="text-xs text-gray-400 mt-1 truncate">{user.displayName}</div>
+          <div className="text-xs mt-1 truncate" style={{ color: '#8b8aaa' }}>{user.displayName}</div>
         )}
       </div>
 
@@ -35,10 +38,14 @@ function Sidebar() {
             to={item.to}
             end={item.end}
             className={({ isActive }) =>
-              `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline
+              `flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all no-underline
                ${isActive
-                 ? 'bg-gray-100 text-gray-900'
-                 : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'}`
+                 ? 'text-white'
+                 : 'hover:text-white'}`
+            }
+            style={({ isActive }) => isActive
+              ? { background: 'rgba(124,106,245,0.2)', color: '#c4baff', boxShadow: 'inset 0 0 0 1px rgba(124,106,245,0.3)' }
+              : { color: '#8b8aaa' }
             }
           >
             <span className="w-5 text-center text-base">{item.icon}</span>
@@ -49,10 +56,13 @@ function Sidebar() {
 
       {/* Logout */}
       {user && (
-        <div className="p-2 border-t border-gray-100">
+        <div className="p-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <button
             onClick={logout}
-            className="w-full text-sm text-gray-400 hover:text-gray-600 py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors text-left cursor-pointer border-none bg-transparent"
+            className="w-full text-sm py-2 px-3 rounded-xl transition-all text-left cursor-pointer border-none bg-transparent"
+            style={{ color: '#8b8aaa' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#f0eeff'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#8b8aaa'; e.currentTarget.style.background = 'transparent'; }}
           >
             Wyloguj
           </button>

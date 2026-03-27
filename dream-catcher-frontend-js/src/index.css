@@ -1,21 +1,36 @@
 @import "tailwindcss";
 
 @theme {
-  --color-page:    #edeae4;
-  --color-card:    #ffffff;
-  --color-input:   #f5f4f2;
-  --color-hover:   #f5f4f2;
-  --color-active:  #eeeceb;
-  --color-border:  #e8e6e3;
-  --color-accent:  #6f42c1;
-  --color-accent-light: #ede9fc;
-  --color-muted:   #9ca3af;
+  --color-page:    #0a0b18;
+  --color-surface: #12132a;
+  --color-card:    #181930;
+  --color-border:  #2a2b45;
+  --color-accent:  #7c6af5;
+  --color-accent-light: #3a3280;
+  --color-pink:    #e879a0;
+  --color-teal:    #22d3ee;
+  --color-gold:    #f4a832;
+  --color-muted:   #8b8aaa;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { min-height: 100vh; background: var(--color-page); font-family: system-ui, -apple-system, sans-serif; }
+
+body {
+  min-height: 100vh;
+  background: #0a0b18;
+  background-image:
+    radial-gradient(ellipse at 15% 15%, rgba(76, 50, 170, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 85%, rgba(40, 20, 100, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 0%, rgba(60, 30, 130, 0.15) 0%, transparent 60%);
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #f0eeff;
+}
+
 #root { min-height: 100vh; }
 
-input[type=range] { accent-color: var(--color-accent); }
+input[type=range] { accent-color: #7c6af5; }
+input[type=date], input[type=time] { color-scheme: dark; }
+
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb { background: #e0ddd9; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(124, 106, 245, 0.25); border-radius: 3px; }
+::-webkit-scrollbar-track { background: transparent; }

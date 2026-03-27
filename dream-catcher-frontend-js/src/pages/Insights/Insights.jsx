@@ -20,42 +20,51 @@ export default function Insights() {
   }));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div className="flex flex-col gap-4">
 
       {/* Header card */}
-      <div className="card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="bg-white rounded-2xl shadow-sm px-5 py-4 flex items-center justify-between">
         <div>
-          <div style={{ fontWeight: 600, fontSize: 15 }}>Insights Engine</div>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>Korelacje środowiska z Twoim samopoczuciem</div>
+          <div className="text-sm font-semibold text-gray-900">Insights Engine</div>
+          <div className="text-xs text-gray-400 mt-0.5">Korelacje środowiska z Twoim samopoczuciem</div>
         </div>
-        <div style={{ display: 'flex', gap: 6 }}>
+        <div className="flex gap-1.5">
           {PERIODS.map(p => (
             <button key={p.value} onClick={() => setPeriod(p.value)}
-              className={`tag${period === p.value ? ' active' : ''}`}>
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border cursor-pointer transition-colors
+                ${period === p.value
+                  ? 'bg-gray-900 text-white border-gray-900'
+                  : 'bg-transparent text-gray-500 border-gray-200 hover:border-gray-400'}`}>
               {p.label}
             </button>
           ))}
         </div>
       </div>
 
-      {loading && <div className="card" style={{ padding: 32, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>Obliczam korelacje…</div>}
-      {error   && <div className="card" style={{ padding: 20, color: '#dc2626', fontSize: 13 }}>Błąd: {error}</div>}
+      {loading && (
+        <div className="bg-white rounded-2xl shadow-sm px-5 py-10 text-center text-sm text-gray-400">
+          Obliczam korelacje…
+        </div>
+      )}
+      {error && (
+        <div className="bg-white rounded-2xl shadow-sm px-5 py-4 text-sm text-red-600">
+          Błąd: {error}
+        </div>
+      )}
 
       {!loading && insights.length === 0 && (
-        <div className="card" style={{ padding: 64, textAlign: 'center' }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>📊</div>
-          <div style={{ fontWeight: 600, marginBottom: 8 }}>Za mało danych</div>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-            Potrzebujesz co najmniej 5 wpisów, aby zobaczyć korelacje.
-          </div>
+        <div className="bg-white rounded-2xl shadow-sm px-5 py-16 text-center">
+          <div className="text-4xl mb-4">📊</div>
+          <div className="text-sm font-semibold text-gray-900 mb-1">Za mało danych</div>
+          <div className="text-xs text-gray-400">Potrzebujesz co najmniej 5 wpisów, aby zobaczyć korelacje.</div>
         </div>
       )}
 
       {insights.length > 0 && (
         <>
-          {/* Wykres */}
-          <div className="card" style={{ padding: '20px 20px 16px' }}>
-            <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 16 }}>Wizualizacja korelacji</div>
+          {/* Chart */}
+          <div className="bg-white rounded-2xl shadow-sm px-5 pt-5 pb-4">
+            <div className="text-sm font-semibold text-gray-900 mb-4">Wizualizacja korelacji</div>
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={chartData} layout="vertical">
                 <XAxis type="number" domain={[-1, 1]} tick={{ fontSize: 11 }} />
@@ -70,27 +79,30 @@ export default function Insights() {
             </ResponsiveContainer>
           </div>
 
-          {/* Karty */}
-          <div className="card" style={{ overflow: 'hidden' }}>
+          {/* Insight cards */}
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
             {insights.map((insight, i) => {
               const strength = Math.abs(insight.correlationCoeff);
               const isNeg = insight.correlationCoeff < 0;
-              const barColor = strength > 0.5 ? (isNeg ? '#f87171' : '#4ade80') : 'var(--border)';
+              const barColor = strength > 0.5 ? (isNeg ? '#f87171' : '#4ade80') : '#e5e7eb';
               return (
-                <div key={i} className="list-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 10, cursor: 'default' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 500, fontSize: 14 }}>
-                      <span style={{ fontSize: 20 }}>{FACTOR_ICON[insight.factor] ?? '📊'}</span>
+                <div key={i} className="flex flex-col gap-2.5 px-5 py-4 border-b border-gray-100 last:border-none">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                      <span className="text-xl">{FACTOR_ICON[insight.factor] ?? '📊'}</span>
                       {insight.factor.replace('_', ' ')} → {insight.metric.replace('_', ' ')}
                     </div>
-                    <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>próbka: {insight.sampleSize}</span>
+                    <span className="text-xs text-gray-400">próbka: {insight.sampleSize}</span>
                   </div>
-                  <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{insight.insight}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
-                    <div style={{ flex: 1, height: 6, background: 'var(--bg-hover)', borderRadius: 3 }}>
-                      <div style={{ width: `${strength * 100}%`, height: '100%', background: barColor, borderRadius: 3 }} />
+                  <div className="text-xs text-gray-500">{insight.insight}</div>
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex-1 h-1.5 bg-gray-100 rounded-full">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{ width: `${strength * 100}%`, background: barColor }}
+                      />
                     </div>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: barColor, width: 36 }}>
+                    <span className="text-xs font-semibold w-9" style={{ color: barColor }}>
                       {insight.correlationCoeff.toFixed(2)}
                     </span>
                   </div>

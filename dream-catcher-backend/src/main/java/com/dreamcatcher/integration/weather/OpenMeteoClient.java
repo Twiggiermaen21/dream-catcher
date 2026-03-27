@@ -6,6 +6,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import org.springframework.lang.NonNull;
+
 import java.time.LocalDate;
 
 @Component
@@ -14,7 +16,7 @@ public class OpenMeteoClient {
     private final WebClient webClient;
 
     public OpenMeteoClient(WebClient.Builder builder,
-                           @Value("${external-api.open-meteo.base-url}") String baseUrl) {
+                           @Value("${external-api.open-meteo.base-url}") @NonNull String baseUrl) {
         this.webClient = builder.baseUrl(baseUrl).build();
     }
 

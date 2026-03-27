@@ -15,34 +15,31 @@ export default function NewEntry() {
   const navigate = useNavigate();
 
   return (
-    <div className="card" style={{ overflow: 'hidden' }}>
+    <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
 
       {/* Header */}
-      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontWeight: 600, fontSize: 15 }}>Nowy wpis</div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>
+      <div className="px-5 py-4 border-b border-gray-100">
+        <div className="text-sm font-semibold text-gray-900">Nowy wpis</div>
+        <div className="text-xs text-gray-400 mt-0.5">
           {new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' })}
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', padding: '0 8px' }}>
+      <div className="flex px-2 border-b border-gray-100">
         {TABS.map(tab => (
-          <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '12px 16px', border: 'none', background: 'transparent',
-            fontSize: 13, fontWeight: activeTab === tab.key ? 600 : 400,
-            color: activeTab === tab.key ? 'var(--text-primary)' : 'var(--text-muted)',
-            borderBottom: activeTab === tab.key ? '2px solid var(--text-primary)' : '2px solid transparent',
-            marginBottom: -1, cursor: 'pointer',
-          }}>
+          <button key={tab.key} onClick={() => setActiveTab(tab.key)}
+            className={`flex items-center gap-1.5 px-4 py-3 text-sm border-none bg-transparent cursor-pointer transition-colors -mb-px
+              ${activeTab === tab.key
+                ? 'font-semibold text-gray-900 border-b-2 border-gray-900'
+                : 'font-normal text-gray-400 hover:text-gray-600 border-b-2 border-transparent'}`}>
             {tab.icon} {tab.label}
           </button>
         ))}
       </div>
 
       {/* Form */}
-      <div style={{ padding: 24 }}>
+      <div className="p-6">
         {activeTab === 'sleep' && <SleepLogForm onSuccess={() => navigate('/journal')} />}
         {activeTab === 'mood'  && <MoodLogForm  onSuccess={() => navigate('/journal')} />}
         {activeTab === 'dream' && <DreamLogForm onSuccess={() => navigate('/journal')} />}

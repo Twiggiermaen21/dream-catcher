@@ -9,6 +9,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import org.springframework.lang.NonNull;
+
 import java.time.LocalDate;
 
 /**
@@ -27,8 +29,8 @@ public class WeatherApiClient {
     private final String apiKey;
 
     public WeatherApiClient(WebClient.Builder builder,
-                            @Value("${external-api.weatherapi.base-url}") String baseUrl,
-                            @Value("${external-api.weatherapi.api-key}") String apiKey) {
+                            @Value("${external-api.weatherapi.base-url}") @NonNull String baseUrl,
+                            @Value("${external-api.weatherapi.api-key}") @NonNull String apiKey) {
         this.webClient = builder.baseUrl(baseUrl).build();
         this.apiKey = apiKey;
     }

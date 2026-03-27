@@ -4,6 +4,7 @@ import com.dreamcatcher.domain.context.MoonData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+import org.springframework.lang.NonNull;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
@@ -16,8 +17,8 @@ public class FarmsenseClient {
     private final String apiKey;
 
     public FarmsenseClient(WebClient.Builder builder,
-                           @Value("${external-api.farmsense.base-url}") String baseUrl,
-                           @Value("${external-api.farmsense.api-key:}") String apiKey) {
+                           @Value("${external-api.farmsense.base-url}") @NonNull String baseUrl,
+                           @Value("${external-api.farmsense.api-key:}") @NonNull String apiKey) {
         this.webClient = builder.baseUrl(baseUrl).build();
         this.apiKey = apiKey;
     }

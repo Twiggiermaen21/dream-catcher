@@ -3,6 +3,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Journal   from './pages/Journal/Journal';
 import NewEntry  from './pages/NewEntry/NewEntry';
 import Insights  from './pages/Insights/Insights';
+import Settings  from './pages/Settings/Settings';
 import Login     from './pages/Login/Login';
 import { useAuthStore } from './store/authStore';
 
@@ -11,6 +12,7 @@ const NAV = [
   { to: '/journal',   icon: '📖', label: 'Dziennik',  sub: 'Wszystkie wpisy' },
   { to: '/new-entry', icon: '✦',  label: 'Nowy wpis', sub: 'Dodaj wpis'   },
   { to: '/insights',  icon: '✧',  label: 'Insights',  sub: 'Korelacje'    },
+  { to: '/settings',  icon: '⚙',  label: 'Ustawienia', sub: 'Konto'       },
 ];
 
 function Sidebar() {
@@ -106,6 +108,7 @@ function AppLayout() {
           <Route path="/journal"   element={<Journal />} />
           <Route path="/new-entry" element={<NewEntry />} />
           <Route path="/insights"  element={<Insights />} />
+          <Route path="/settings"  element={<Settings />} />
         </Routes>
       </main>
     </div>

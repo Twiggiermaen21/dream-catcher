@@ -107,9 +107,10 @@ public class SecurityConfig {
             // Kolejność MA znaczenie — pierwsze pasujące reguły wygrywa!
             .authorizeHttpRequests(auth -> auth
                 // permitAll() — dostępne BEZ logowania (publiczne endpointy)
-                .requestMatchers("/api/v1/auth/**").permitAll()    // rejestracja, logowanie
-                .requestMatchers("/api/v1/context/**").permitAll() // dane pogody (publiczne)
-                .requestMatchers("/actuator/health").permitAll()   // health-check dla monitoringu
+                .requestMatchers("/api/v1/auth/**").permitAll()             // rejestracja, logowanie
+                .requestMatchers("/api/v1/context/**").permitAll()          // dane pogody (publiczne)
+                .requestMatchers("/api/v1/settings/confirm").permitAll()    // link z emaila — bez JWT
+                .requestMatchers("/actuator/health").permitAll()            // health-check dla monitoringu
 
                 // hasRole("ADMIN") — tylko użytkownicy z rolą ADMIN.
                 // Spring automatycznie dodaje prefix "ROLE_" więc

@@ -5,6 +5,7 @@ import com.dreamcatcher.api.dto.request.RequestPasswordChangeRequest;
 import com.dreamcatcher.service.SettingsService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -22,7 +23,7 @@ public class SettingsController {
 
     @PostMapping("/request-email-change")
     public ResponseEntity<Void> requestEmailChange(
-            @RequestAttribute("userId") UUID userId,
+            @RequestAttribute("userId") @NonNull UUID userId,
             @Valid @RequestBody RequestEmailChangeRequest request) {
         settingsService.requestEmailChange(userId, request);
         return ResponseEntity.accepted().build();
@@ -30,7 +31,7 @@ public class SettingsController {
 
     @PostMapping("/request-password-change")
     public ResponseEntity<Void> requestPasswordChange(
-            @RequestAttribute("userId") UUID userId,
+            @RequestAttribute("userId") @NonNull UUID userId,
             @Valid @RequestBody RequestPasswordChangeRequest request) {
         settingsService.requestPasswordChange(userId, request);
         return ResponseEntity.accepted().build();

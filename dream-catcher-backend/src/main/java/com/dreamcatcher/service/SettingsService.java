@@ -64,7 +64,7 @@ public class SettingsService {
         emailService.sendEmailChangeConfirmation(user.getEmail(), token);
     }
 
-    public void requestPasswordChange(UUID userId, RequestPasswordChangeRequest request) {
+    public void requestPasswordChange(@NonNull UUID userId, RequestPasswordChangeRequest request) {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
@@ -99,7 +99,7 @@ public class SettingsService {
             return frontendUrl + "/settings?error=expired";
         }
 
-        var user = userRepository.findById(change.getUserId())
+        var user = userRepository.findById(Objects.requireNonNull(change.getUserId()))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         switch (change.getType()) {
@@ -107,7 +107,7 @@ public class SettingsService {
             case PASSWORD -> user.setPassword(change.getNewValue());
         }
 
-        userRepository.save(user);
+        userRepository.save(Objects.requireNonNull(user));
         pendingChangeRepository.delete(change);
 
         String changedParam = change.getType() == ChangeType.EMAIL ? "email" : "password";

@@ -24,7 +24,7 @@ public class SleepLogController {
 
     @PostMapping
     public ResponseEntity<SleepLog> createSleepLog(
-            @RequestHeader("X-User-Id") UUID userId,
+            @RequestAttribute("userId") UUID userId,
             @Valid @RequestBody CreateSleepLogRequest request) {
 
         SleepLog created = sleepLogService.createSleepLog(userId, request);
@@ -33,7 +33,7 @@ public class SleepLogController {
 
     @GetMapping
     public ResponseEntity<List<SleepLog>> getSleepLogs(
-            @RequestHeader("X-User-Id") UUID userId) {
+            @RequestAttribute("userId") UUID userId) {
 
         return ResponseEntity.ok(sleepLogService.getUserLogs(userId));
     }

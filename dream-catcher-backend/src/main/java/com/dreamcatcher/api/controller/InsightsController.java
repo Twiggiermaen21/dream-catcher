@@ -21,7 +21,7 @@ public class InsightsController {
 
     @GetMapping("/correlations")
     public ResponseEntity<List<CorrelationInsight>> getCorrelations(
-            @RequestHeader("X-User-Id") UUID userId,
+            @RequestAttribute("userId") UUID userId,
             @RequestParam(defaultValue = "30") int periodDays) {
 
         List<CorrelationInsight> insights = insightsEngineService.computeCorrelations(userId, periodDays);

@@ -20,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.lang.NonNull;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -126,7 +128,7 @@ public class MoodLogController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMoodLog(
             @RequestAttribute("userId") UUID userId,
-            @PathVariable UUID id) {
+            @PathVariable @NonNull UUID id) {
         moodLogService.deleteLog(userId, id);
         return ResponseEntity.noContent().build();
     }
@@ -134,7 +136,7 @@ public class MoodLogController {
     @PutMapping("/{id}")
     public ResponseEntity<MoodLog> replaceMoodLog(
             @RequestAttribute("userId") UUID userId,
-            @PathVariable UUID id,
+            @PathVariable @NonNull UUID id,
             @Valid @RequestBody CreateMoodLogRequest request) {
         return ResponseEntity.ok(moodLogService.replaceLog(userId, id, request));
     }

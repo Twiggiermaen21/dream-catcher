@@ -18,6 +18,7 @@ import com.dreamcatcher.domain.core.MoodLog;
 import com.dreamcatcher.integration.aggregator.ExternalDataAggregatorService;
 import com.dreamcatcher.repository.MoodLogRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -180,7 +181,7 @@ public class MoodLogService {
         return repository.findByUserIdOrderByDateDesc(userId);
     }
 
-    public void deleteLog(UUID userId, UUID logId) {
+    public void deleteLog(UUID userId, @NonNull UUID logId) {
         MoodLog log = repository.findById(logId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "MoodLog not found"));
         if (!log.getUserId().equals(userId))
@@ -188,7 +189,7 @@ public class MoodLogService {
         repository.delete(log);
     }
 
-    public MoodLog replaceLog(UUID userId, UUID logId, CreateMoodLogRequest request) {
+    public MoodLog replaceLog(UUID userId, @NonNull UUID logId, CreateMoodLogRequest request) {
         deleteLog(userId, logId);
         return createMoodLog(userId, request);
     }

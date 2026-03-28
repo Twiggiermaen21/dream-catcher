@@ -15,6 +15,7 @@ import com.dreamcatcher.domain.core.SleepLog;
 import com.dreamcatcher.integration.aggregator.ExternalDataAggregatorService;
 import com.dreamcatcher.repository.SleepLogRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -92,7 +93,7 @@ public class SleepLogService {
         return repository.findByUserIdOrderByDateDesc(userId);
     }
 
-    public void deleteLog(UUID userId, UUID logId) {
+    public void deleteLog(UUID userId, @NonNull UUID logId) {
         SleepLog log = repository.findById(logId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SleepLog not found"));
         if (!log.getUserId().equals(userId))
@@ -100,7 +101,7 @@ public class SleepLogService {
         repository.delete(log);
     }
 
-    public SleepLog replaceLog(UUID userId, UUID logId, CreateSleepLogRequest request) {
+    public SleepLog replaceLog(UUID userId, @NonNull UUID logId, CreateSleepLogRequest request) {
         deleteLog(userId, logId);
         return createSleepLog(userId, request);
     }

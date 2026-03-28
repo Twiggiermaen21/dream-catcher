@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.lang.NonNull;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +43,7 @@ public class SleepLogController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSleepLog(
             @RequestAttribute("userId") UUID userId,
-            @PathVariable UUID id) {
+            @PathVariable @NonNull UUID id) {
         sleepLogService.deleteLog(userId, id);
         return ResponseEntity.noContent().build();
     }
@@ -49,7 +51,7 @@ public class SleepLogController {
     @PutMapping("/{id}")
     public ResponseEntity<SleepLog> replaceSleepLog(
             @RequestAttribute("userId") UUID userId,
-            @PathVariable UUID id,
+            @PathVariable @NonNull UUID id,
             @Valid @RequestBody CreateSleepLogRequest request) {
         return ResponseEntity.ok(sleepLogService.replaceLog(userId, id, request));
     }

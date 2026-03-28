@@ -6,6 +6,7 @@ import com.dreamcatcher.domain.core.DreamLog;
 import com.dreamcatcher.integration.aggregator.ExternalDataAggregatorService;
 import com.dreamcatcher.repository.DreamLogRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -52,7 +53,7 @@ public class DreamLogService {
         return repository.findByUserIdOrderByDateDesc(userId);
     }
 
-    public void deleteLog(UUID userId, UUID logId) {
+    public void deleteLog(UUID userId, @NonNull UUID logId) {
         DreamLog log = repository.findById(logId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "DreamLog not found"));
         if (!log.getUserId().equals(userId))
@@ -60,7 +61,7 @@ public class DreamLogService {
         repository.delete(log);
     }
 
-    public DreamLog replaceLog(UUID userId, UUID logId, CreateDreamLogRequest request) {
+    public DreamLog replaceLog(UUID userId, @NonNull UUID logId, CreateDreamLogRequest request) {
         deleteLog(userId, logId);
         return createDreamLog(userId, request);
     }

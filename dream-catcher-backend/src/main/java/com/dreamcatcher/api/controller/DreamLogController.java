@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.lang.NonNull;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +42,7 @@ public class DreamLogController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDreamLog(
             @RequestAttribute("userId") UUID userId,
-            @PathVariable UUID id) {
+            @PathVariable @NonNull UUID id) {
         dreamLogService.deleteLog(userId, id);
         return ResponseEntity.noContent().build();
     }
@@ -48,7 +50,7 @@ public class DreamLogController {
     @PutMapping("/{id}")
     public ResponseEntity<DreamLog> replaceDreamLog(
             @RequestAttribute("userId") UUID userId,
-            @PathVariable UUID id,
+            @PathVariable @NonNull UUID id,
             @Valid @RequestBody CreateDreamLogRequest request) {
         return ResponseEntity.ok(dreamLogService.replaceLog(userId, id, request));
     }

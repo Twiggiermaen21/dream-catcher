@@ -114,7 +114,7 @@ export default function Journal() {
         ))}
       </div>
 
-      <div className="min-h-[400px]">
+      <div className="min-h-100">
         {loading && (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />

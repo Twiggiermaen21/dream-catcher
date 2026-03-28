@@ -97,7 +97,7 @@ public class SleepLogService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SleepLog not found"));
         if (!log.getUserId().equals(userId))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
-        repository.deleteById(logId);
+        repository.delete(log);
     }
 
     public SleepLog replaceLog(UUID userId, UUID logId, CreateSleepLogRequest request) {

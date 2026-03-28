@@ -1,6 +1,7 @@
 package com.dreamcatcher.domain.core;
 
 import com.dreamcatcher.domain.context.EnvironmentalContext;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -77,5 +78,6 @@ public final class DreamLog extends LogEntry {
     public DreamClarity getClarity()    { return clarity; }
     public DreamSentiment getSentiment(){ return sentiment; }
     public List<String> getSymbols()    { return symbols; }
+    @JsonProperty("isRecurring")
     public boolean isRecurring()        { return isRecurring; }
 }

@@ -192,7 +192,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // To bezpieczniejsze niż nagłówek HTTP:
                 //   - Atrybuty są wewnętrzne (klient nie może ich podrobić)
                 //   - Nagłówki HTTP może wysłać ktokolwiek
-                request.setAttribute("userId", jwtService.extractUserId(jwt));
+                // UUID.fromString() — konwertuje String na UUID.
+                // @RequestAttribute("userId") w kontrolerach oczekuje UUID,
+                // a nie String — Spring nie robi tej konwersji automatycznie.
+                request.setAttribute("userId",
+                        java.util.UUID.fromString(jwtService.extractUserId(jwt)));
             }
         }
 

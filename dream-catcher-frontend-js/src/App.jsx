@@ -17,7 +17,7 @@ function Sidebar() {
   const { user, logout } = useAuthStore();
 
   return (
-    <aside className="w-[260px] min-w-[260px] h-screen flex flex-col glass border-r-0 sticky top-0 z-50">
+    <aside className="w-65 min-w-65 h-screen flex flex-col glass border-r-0 sticky top-0 z-50">
 
       {/* Brand */}
       <div className="p-8 pb-6 border-b border-white/5">

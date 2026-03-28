@@ -3,10 +3,12 @@ package com.dreamcatcher.service;
 import com.dreamcatcher.domain.user.Role;
 import com.dreamcatcher.domain.user.User;
 import com.dreamcatcher.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService {
@@ -28,7 +30,7 @@ public class AuthService {
 
     public AuthResponse register(String email, String password, String displayName) {
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Email already in use: " + email);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
         }
 
         var user = new User(email, passwordEncoder.encode(password), displayName, Role.USER);
@@ -43,7 +45,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(email, password));
 
         var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         return new AuthResponse(jwtService.generateToken(user), user.getId().toString(),
                 user.getDisplayName(), user.getRole().name());

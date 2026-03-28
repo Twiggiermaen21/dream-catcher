@@ -65,7 +65,7 @@ function Pill({ children, color = 'accent' }) {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="glass !bg-[#0f1122]/90 p-3 rounded-2xl border-white/10 shadow-xl">
+    <div className="glass bg-[#0f1122]/90! p-3 rounded-2xl border-white/10 shadow-xl">
       <div className="text-muted text-[11px] mb-1 font-medium">{label}</div>
       <div className="text-white font-bold text-sm">Jakość: <span className="text-accent">{payload[0].value}/10</span></div>
     </div>
@@ -107,7 +107,7 @@ export default function Dashboard() {
             {new Date().toLocaleDateString('pl-PL', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}
           </div>
           <h1 className="text-white text-4xl font-extrabold leading-tight">
-            {greeting}, <span className="bg-linear-to-r from-[#c4baff] to-[#e879a0] bg-clip-text text-transparent">{firstName}</span> <span className="text-accent/80">✦</span>
+            {greeting}, <span className="bg-linear-to-r from-[#c4baff] to-pink bg-clip-text text-transparent">{firstName}</span> <span className="text-accent/80">✦</span>
           </h1>
           <div className="text-muted text-sm mt-2 font-medium">
             Masz <strong className="text-accent underline decoration-accent/20 underline-offset-4">{sleepLogs.length + moodLogs.length + dreamLogs.length}</strong> wpisów w dzienniku
@@ -143,7 +143,9 @@ export default function Dashboard() {
           <div className="p-6">
             <CardHeader label="Stan kosmosu" />
             {ctxLoading ? (
-              <div className="text-muted text-sm animate-pulse">Pobieranie…</div>
+              <div className="flex items-center justify-center py-4">
+                <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-accent animate-spin" />
+              </div>
             ) : context?.moonData ? (
               <>
                 <div className="text-center py-4 relative">
@@ -182,7 +184,9 @@ export default function Dashboard() {
           <div className="p-6">
             <CardHeader label="Biomet" />
             {ctxLoading ? (
-              <div className="text-muted text-sm animate-pulse">Pobieranie…</div>
+              <div className="flex items-center justify-center py-4">
+                <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-accent animate-spin" />
+              </div>
             ) : context?.weatherData ? (() => {
               const p = context.weatherData.pressureHpa;
               const sleepScore = p > 1013 ? 'Dobre warunki' : p > 1000 ? 'Umiarkowane' : 'Niskie ciśnienie';
@@ -253,7 +257,7 @@ export default function Dashboard() {
                 <div className="text-muted text-sm italic">Dodaj wpisy snu, by zobaczyć trend</div>
               </div>
             ) : (
-              <div className="h-[140px] w-full mt-2">
+              <div className="h-35 w-full mt-2">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={sleepChartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
                     <defs>

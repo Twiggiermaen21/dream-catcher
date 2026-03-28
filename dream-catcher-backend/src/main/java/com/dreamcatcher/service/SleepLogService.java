@@ -14,8 +14,10 @@ import com.dreamcatcher.domain.context.EnvironmentalContext;
 import com.dreamcatcher.domain.core.SleepLog;
 import com.dreamcatcher.integration.aggregator.ExternalDataAggregatorService;
 import com.dreamcatcher.repository.SleepLogRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -88,5 +90,18 @@ public class SleepLogService {
         // Metoda z repozytorium — Spring Data generuje SQL automatycznie:
         //   SELECT * FROM sleep_logs WHERE user_id = ? ORDER BY date DESC
         return repository.findByUserIdOrderByDateDesc(userId);
+    }
+
+    public void deleteLog(UUID userId, UUID logId) {
+        SleepLog log = repository.findById(logId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SleepLog not found"));
+        if (!log.getUserId().equals(userId))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        repository.deleteById(logId);
+    }
+
+    public SleepLog replaceLog(UUID userId, UUID logId, CreateSleepLogRequest request) {
+        deleteLog(userId, logId);
+        return createSleepLog(userId, request);
     }
 }

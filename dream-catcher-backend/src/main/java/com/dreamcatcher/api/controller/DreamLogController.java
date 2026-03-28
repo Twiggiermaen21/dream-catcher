@@ -36,4 +36,20 @@ public class DreamLogController {
 
         return ResponseEntity.ok(dreamLogService.getUserLogs(userId));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDreamLog(
+            @RequestAttribute("userId") UUID userId,
+            @PathVariable UUID id) {
+        dreamLogService.deleteLog(userId, id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DreamLog> replaceDreamLog(
+            @RequestAttribute("userId") UUID userId,
+            @PathVariable UUID id,
+            @Valid @RequestBody CreateDreamLogRequest request) {
+        return ResponseEntity.ok(dreamLogService.replaceLog(userId, id, request));
+    }
 }

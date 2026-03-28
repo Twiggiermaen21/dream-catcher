@@ -6,4 +6,10 @@ export const sleepLogApi = {
 
   getAll: () =>
     apiClient.get('/api/v1/logs/sleep').then((r) => r.data),
+
+  delete: (id) =>
+    apiClient.delete(`/api/v1/logs/sleep/${id}`),
+
+  update: (id, request) =>
+    apiClient.put(`/api/v1/logs/sleep/${id}`, request).then((r) => r.data),
 };

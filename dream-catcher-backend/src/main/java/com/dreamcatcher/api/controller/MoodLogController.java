@@ -122,4 +122,20 @@ public class MoodLogController {
         // Semantycznie: "żądanie było poprawne, oto dane".
         return ResponseEntity.ok(moodLogService.getUserLogs(userId));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMoodLog(
+            @RequestAttribute("userId") UUID userId,
+            @PathVariable UUID id) {
+        moodLogService.deleteLog(userId, id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MoodLog> replaceMoodLog(
+            @RequestAttribute("userId") UUID userId,
+            @PathVariable UUID id,
+            @Valid @RequestBody CreateMoodLogRequest request) {
+        return ResponseEntity.ok(moodLogService.replaceLog(userId, id, request));
+    }
 }

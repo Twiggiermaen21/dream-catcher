@@ -37,4 +37,20 @@ public class SleepLogController {
 
         return ResponseEntity.ok(sleepLogService.getUserLogs(userId));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSleepLog(
+            @RequestAttribute("userId") UUID userId,
+            @PathVariable UUID id) {
+        sleepLogService.deleteLog(userId, id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<SleepLog> replaceSleepLog(
+            @RequestAttribute("userId") UUID userId,
+            @PathVariable UUID id,
+            @Valid @RequestBody CreateSleepLogRequest request) {
+        return ResponseEntity.ok(sleepLogService.replaceLog(userId, id, request));
+    }
 }

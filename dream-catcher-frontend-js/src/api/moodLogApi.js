@@ -6,4 +6,10 @@ export const moodLogApi = {
 
   getAll: () =>
     apiClient.get('/api/v1/logs/mood').then((r) => r.data),
+
+  delete: (id) =>
+    apiClient.delete(`/api/v1/logs/mood/${id}`),
+
+  update: (id, request) =>
+    apiClient.put(`/api/v1/logs/mood/${id}`, request).then((r) => r.data),
 };

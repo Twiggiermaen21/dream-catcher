@@ -17,8 +17,10 @@ import com.dreamcatcher.domain.context.EnvironmentalContext;
 import com.dreamcatcher.domain.core.MoodLog;
 import com.dreamcatcher.integration.aggregator.ExternalDataAggregatorService;
 import com.dreamcatcher.repository.MoodLogRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -176,5 +178,18 @@ public class MoodLogService {
         // Wynikowy SQL (przybliżony):
         //   SELECT * FROM mood_logs WHERE user_id = ? ORDER BY date DESC
         return repository.findByUserIdOrderByDateDesc(userId);
+    }
+
+    public void deleteLog(UUID userId, UUID logId) {
+        MoodLog log = repository.findById(logId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "MoodLog not found"));
+        if (!log.getUserId().equals(userId))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        repository.deleteById(logId);
+    }
+
+    public MoodLog replaceLog(UUID userId, UUID logId, CreateMoodLogRequest request) {
+        deleteLog(userId, logId);
+        return createMoodLog(userId, request);
     }
 }

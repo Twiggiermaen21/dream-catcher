@@ -35,6 +35,6 @@ public class ExternalDataAggregatorService {
             bundle = WeatherApiBundle.fallback();
         }
 
-        return new EnvironmentalContext(bundle.weatherData(), bundle.moonData());
+        return new EnvironmentalContext(bundle.weatherData(), bundle.moonData(), bundle.sunrise(), bundle.sunset());
     }
 }

@@ -105,6 +105,7 @@ public class SettingsService {
         switch (change.getType()) {
             case EMAIL    -> user.setEmail(change.getNewValue());
             case PASSWORD -> user.setPassword(change.getNewValue());
+            case PASSWORD_RESET -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid token type");
         }
 
         userRepository.save(Objects.requireNonNull(user));

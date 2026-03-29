@@ -7,6 +7,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class EmailService {
 
@@ -73,10 +75,10 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
-            helper.setFrom(fromAddress);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(html, true);
+            helper.setFrom(Objects.requireNonNull(fromAddress));
+            helper.setTo(Objects.requireNonNull(to));
+            helper.setSubject(Objects.requireNonNull(subject));
+            helper.setText(Objects.requireNonNull(html), true);
             mailSender.send(message);
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send email to " + to, e);

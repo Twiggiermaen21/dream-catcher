@@ -19,6 +19,14 @@ if (stored) {
   } catch {}
 }
 
+apiClient.interceptors.request.use((config) => {
+  if (config.url?.startsWith('/api/v1/auth/')) {
+    const { Authorization: _, ...rest } = config.headers;
+    config.headers = rest;
+  }
+  return config;
+});
+
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {

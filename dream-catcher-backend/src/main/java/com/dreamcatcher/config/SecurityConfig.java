@@ -107,6 +107,7 @@ public class SecurityConfig {
             // Kolejność MA znaczenie — pierwsze pasujące reguły wygrywa!
             .authorizeHttpRequests(auth -> auth
                 // permitAll() — dostępne BEZ logowania (publiczne endpointy)
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()     // CORS preflight
                 .requestMatchers("/api/v1/auth/**").permitAll()             // rejestracja, logowanie
                 .requestMatchers("/api/v1/context/**").permitAll()          // dane pogody (publiczne)
                 .requestMatchers("/api/v1/settings/confirm").permitAll()    // link z emaila — bez JWT

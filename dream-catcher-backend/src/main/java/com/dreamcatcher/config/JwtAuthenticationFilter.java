@@ -149,55 +149,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // jwtService.extractEmail(jwt) — dekoduje token JWT i zwraca email.
         // JWT zawiera "claims" (dane) w środkowej części (Payload).
         final String jwt = authHeader.substring(7);
-        final String email = jwtService.extractEmail(jwt);
 
         // Krok 4: Walidacja i ustawienie kontekstu bezpieczeństwa.
-        //
-        // email != null — token zawierał email
-        // SecurityContextHolder.getContext().getAuthentication() == null
-        //   — użytkownik NIE jest jeszcze uwierzytelniony w bieżącym żądaniu
-        //   (zapobiega podwójnemu uwierzytelnianiu)
-        //
-        // && — operator logiczny "I" (AND). Oba warunki muszą być true.
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        // Owinięte w try-catch — wygasły lub nieprawidłowy token nie może
+        // blokować publicznych endpointów (np. forgot-password).
+        // Dla chronionych endpointów Spring Security zwróci 401 sam z siebie.
+        try {
+            final String email = jwtService.extractEmail(jwt);
 
-            // Załaduj szczegóły użytkownika z bazy danych.
-            // loadUserByUsername pobiera: email, hasło (hash), role.
-            var userDetails = userDetailsService.loadUserByUsername(email);
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // Sprawdź czy token jest ważny (podpis OK i nie wygasł).
-            if (jwtService.isTokenValid(jwt, email)) {
+                var userDetails = userDetailsService.loadUserByUsername(email);
 
-                // Utwórz obiekt Authentication (Spring Security).
-                // UsernamePasswordAuthenticationToken = standardowy typ.
-                //   parametr 1: principal (kto?) — UserDetails
-                //   parametr 2: credentials (hasło?) — null (JWT = brak hasła)
-                //   parametr 3: authorities (role) — lista uprawnień
-                var authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                if (jwtService.isTokenValid(jwt, email)) {
 
-                // Dodaj szczegóły żądania (IP, session id...) do tokena.
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    var authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
 
-                // Zapisz Authentication w SecurityContext.
-                // SecurityContext = "skrzynka" przechowująca info o zalogowanym.
-                // Dostępna wszędzie w tym wątku (ThreadLocal).
-                // Kontrolery mogą teraz sprawdzać @PreAuthorize, hasRole() itp.
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Zapisz userId jako atrybut żądania.
-                // Dzięki temu kontrolery mogą odczytać go przez:
-                //   @RequestAttribute("userId") UUID userId
-                //
-                // To bezpieczniejsze niż nagłówek HTTP:
-                //   - Atrybuty są wewnętrzne (klient nie może ich podrobić)
-                //   - Nagłówki HTTP może wysłać ktokolwiek
-                // UUID.fromString() — konwertuje String na UUID.
-                // @RequestAttribute("userId") w kontrolerach oczekuje UUID,
-                // a nie String — Spring nie robi tej konwersji automatycznie.
-                request.setAttribute("userId",
-                        java.util.UUID.fromString(jwtService.extractUserId(jwt)));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                    request.setAttribute("userId",
+                            java.util.UUID.fromString(jwtService.extractUserId(jwt)));
+                }
             }
+        } catch (Exception ignored) {
+            // Token nieprawidłowy lub wygasły — kontynuuj bez autentykacji.
         }
 
         // Krok 5: Przekaż żądanie dalej do następnego filtra lub kontrolera.

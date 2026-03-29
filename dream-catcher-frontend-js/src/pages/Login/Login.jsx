@@ -58,7 +58,7 @@ export default function Login() {
   const closeForgot = () => { setForgotOpen(false); setForgotSent(false); setForgotEmail(''); };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[#050614]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-page">
       {/* Dynamic Background elements */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink/15 rounded-full blur-[120px] pointer-events-none"></div>
@@ -72,7 +72,7 @@ export default function Login() {
             <span className="text-5xl drop-shadow-glow-purple group-hover:scale-110 transition-transform">🌙</span>
           </div>
           <h1 className="text-4xl font-black text-white tracking-tighter mb-2">Dream Catcher</h1>
-          <p className="text-muted text-sm font-medium tracking-wide opacity-80 uppercase tracking-widest text-[10px]">Twój holistyczny dziennik snu i marzeń</p>
+          <p className="text-muted text-sm font-medium opacity-80 uppercase tracking-widest text-[10px]">Twój holistyczny dziennik snu i marzeń</p>
         </div>
 
         {/* Card */}

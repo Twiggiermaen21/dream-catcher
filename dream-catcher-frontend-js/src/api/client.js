@@ -21,8 +21,7 @@ if (stored) {
 
 apiClient.interceptors.request.use((config) => {
   if (config.url?.startsWith('/api/v1/auth/')) {
-    const { Authorization: _, ...rest } = config.headers;
-    config.headers = rest;
+    delete config.headers['Authorization'];
   }
   return config;
 });

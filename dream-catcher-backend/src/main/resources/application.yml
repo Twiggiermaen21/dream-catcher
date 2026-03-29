@@ -39,6 +39,7 @@ logging:
   level:
     com.dreamcatcher: DEBUG
     org.springframework.web: INFO
+    org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver: ERROR
 
 jwt:
   secret: ${JWT_SECRET:}

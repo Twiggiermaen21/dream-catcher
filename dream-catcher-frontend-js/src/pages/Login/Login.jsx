@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { apiClient } from '../../api/client';
 
 function DarkInput({ type, placeholder, value, onChange, required, minLength }) {
   return (
@@ -17,12 +18,16 @@ function DarkInput({ type, placeholder, value, onChange, required, minLength }) 
 }
 
 export default function Login() {
-  const [mode, setMode]       = useState('login');
-  const [form, setForm]       = useState({ email: '', password: '', displayName: '' });
-  const [error, setError]     = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login, register }   = useAuthStore();
-  const navigate              = useNavigate();
+  const [mode, setMode]             = useState('login');
+  const [form, setForm]             = useState({ email: '', password: '', displayName: '' });
+  const [error, setError]           = useState('');
+  const [loading, setLoading]       = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const { login, register }         = useAuthStore();
+  const navigate                    = useNavigate();
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -36,6 +41,17 @@ export default function Login() {
     } catch (err) {
       setError(err.response?.data?.message ?? 'Nieprawidłowe dane logowania');
     } finally { setLoading(false); }
+  };
+
+  const handleForgot = async e => {
+    e.preventDefault();
+    setForgotLoading(true);
+    try {
+      await apiClient.post('/api/v1/auth/forgot-password', { email: forgotEmail });
+      setForgotSent(true);
+    } catch {
+      setForgotSent(true); // nie ujawniamy czy email istnieje
+    } finally { setForgotLoading(false); }
   };
 
   return (
@@ -113,17 +129,41 @@ export default function Login() {
               {loading ? 'Uwierzytelnianie…' : mode === 'login' ? 'Zaloguj się' : 'Utwórz konto'}
             </button>
 
-            {mode === 'login' && (
-              <div className="mt-2 p-4 rounded-2xl bg-white/3 border border-white/5">
-                <p className="text-center text-[10px] uppercase font-bold tracking-widest text-muted mb-2">
-                  Konto demo:
-                </p>
-                <div className="flex flex-col items-center gap-1">
-                  <span className="text-accent text-[11px] font-black tracking-tight">user@dreamcatcher.app</span>
-                  <span className="text-accent text-[11px] font-black tracking-tight">User1234!</span>
-                </div>
+            {mode === 'login' && !forgotOpen && (
+              <button type="button" onClick={() => setForgotOpen(true)}
+                className="w-full text-center text-[11px] text-muted hover:text-accent transition-colors bg-transparent border-none cursor-pointer py-1">
+                Nie pamiętasz hasła?
+              </button>
+            )}
+
+            {mode === 'login' && forgotOpen && (
+              <div className="mt-1 p-4 rounded-2xl bg-white/3 border border-white/8 flex flex-col gap-3">
+                {forgotSent ? (
+                  <p className="text-center text-xs text-accent font-semibold">
+                    Jeśli konto istnieje, wysłaliśmy link na podany adres.
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-[10px] uppercase font-bold tracking-widest text-muted text-center">
+                      Reset hasła
+                    </p>
+                    <form onSubmit={handleForgot} className="flex flex-col gap-2">
+                      <DarkInput type="email" placeholder="twoj@email.com"
+                        value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} required />
+                      <button type="submit" disabled={forgotLoading}
+                        className="w-full py-3 text-xs font-black rounded-xl transition-all cursor-pointer border-none text-white bg-accent/80 hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest">
+                        {forgotLoading ? 'Wysyłanie…' : 'Wyślij link'}
+                      </button>
+                    </form>
+                    <button type="button" onClick={() => setForgotOpen(false)}
+                      className="text-center text-[10px] text-muted hover:text-white transition-colors bg-transparent border-none cursor-pointer">
+                      Anuluj
+                    </button>
+                  </>
+                )}
               </div>
             )}
+
           </form>
         </div>
 

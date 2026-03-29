@@ -33,6 +33,18 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request.email(), request.password()));
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.forgotPassword(request.email());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request.token(), request.newPassword());
+        return ResponseEntity.ok().build();
+    }
+
     public record RegisterRequest(
             @Email @NotBlank String email,
             @NotBlank @Size(min = 6, message = "Password must be at least 6 characters") String password,
@@ -42,5 +54,14 @@ public class AuthController {
     public record LoginRequest(
             @Email @NotBlank String email,
             @NotBlank String password
+    ) {}
+
+    public record ForgotPasswordRequest(
+            @Email @NotBlank String email
+    ) {}
+
+    public record ResetPasswordRequest(
+            @NotBlank String token,
+            @NotBlank @Size(min = 6, message = "Password must be at least 6 characters") String newPassword
     ) {}
 }

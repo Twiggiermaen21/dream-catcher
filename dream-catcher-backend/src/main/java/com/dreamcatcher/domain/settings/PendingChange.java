@@ -9,7 +9,7 @@ import java.util.UUID;
 @Table(name = "pending_changes")
 public class PendingChange {
 
-    public enum ChangeType { EMAIL, PASSWORD }
+    public enum ChangeType { EMAIL, PASSWORD, PASSWORD_RESET }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

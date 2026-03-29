@@ -16,6 +16,9 @@ public class EmailService {
     @Value("${app.base-url}")
     private String baseUrl;
 
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
+
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
@@ -30,6 +33,22 @@ public class EmailService {
         msg.setText(
             "Otrzymaliśmy prośbę o zmianę adresu e-mail.\n\n" +
             "Kliknij link poniżej, aby potwierdzić zmianę (ważny przez 5 minut):\n\n" +
+            link + "\n\n" +
+            "Jeśli to nie Ty, zignoruj tę wiadomość."
+        );
+        mailSender.send(msg);
+    }
+
+    public void sendPasswordResetEmail(String toEmail, String token) {
+        String link = frontendUrl + "/reset-password?token=" + token;
+
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setFrom(fromAddress);
+        msg.setTo(toEmail);
+        msg.setSubject("Dream Catcher – reset hasła");
+        msg.setText(
+            "Otrzymaliśmy prośbę o reset hasła.\n\n" +
+            "Kliknij link poniżej, aby ustawić nowe hasło (ważny przez 15 minut):\n\n" +
             link + "\n\n" +
             "Jeśli to nie Ty, zignoruj tę wiadomość."
         );

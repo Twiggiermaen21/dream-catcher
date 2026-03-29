@@ -4,7 +4,8 @@ import Journal   from './pages/Journal/Journal';
 import NewEntry  from './pages/NewEntry/NewEntry';
 import Insights  from './pages/Insights/Insights';
 import Settings  from './pages/Settings/Settings';
-import Login     from './pages/Login/Login';
+import Login        from './pages/Login/Login';
+import ResetPassword from './pages/ResetPassword/ResetPassword';
 import { useAuthStore } from './store/authStore';
 
 const NAV = [
@@ -125,6 +126,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/*" element={
           <ProtectedRoute><AppLayout /></ProtectedRoute>
         } />
